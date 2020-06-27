@@ -10,7 +10,119 @@ II Proyecto - I Semestre - 2020
 
 from tkinter import *
 from tkinter import messagebox
+import pygame
 import os
+
+class Avatar():
+
+    def __init__(self,type,row,column,attackPower,health,hit):
+        self.type = type
+        self.row = row
+        self.column = column
+        self.attackPower = attackPower
+        self.health = health
+        self.hit = hit
+
+    def GetType(self):
+        return self.type
+
+    def SetType(self,type):
+        self.type = type
+
+    def GetRow(self):
+        return self.row
+
+    def SetRow(self,row):
+        self.row = row
+
+    def GetColumn(self):
+        return self.column
+
+    def SetColumn(self,column):
+        self.column = column
+
+    def GetAttackPower(self):
+        return self.attackPower
+
+    def SetAttackPower(self,attackPower):
+        self.attackPower = attackPower
+
+    def GetHealth(self):
+        return self.health
+
+    def SetHealth(self,health):
+        self.health = health
+
+    def GetHit(self):
+        return self.hit
+
+    def SetHit(self,hit):
+        self.hit = hit
+
+    #Methods of the class
+    """
+    draw()
+    walk()
+    delete()
+    useWeapon()
+    protect()
+    """
+
+class Rooks:
+    def __init__(self,type,row,column,attackPower,cost,health,damage):
+        self.type = type
+        self.row = row
+        self.column = column
+        self.attackPower = attackPower
+        self.cost = cost
+        self.health = health
+        self.damage = damage
+
+    def GetType(self):
+        return self.type
+
+    def SetType(self,type):
+        self.type = type
+
+    def GetRow(self):
+        return self.row
+
+    def SetRow(self,row):
+        self.row = row
+
+    def GetColumn(self):
+        return self.column
+
+    def SetColumn(self,column):
+        self.column = column
+
+    def GetAttackPower(self):
+        return self.attackPower
+
+    def SetAttackPower(self,attackPower):
+        self.attackPower = attackPower
+
+    def GetCost(self):
+        return self.cost
+
+    def SetCost(self,cost):
+        self.cost = cost
+
+    def GetHealth(self):
+        return self.health
+
+    def SetHealth(self,health):
+        self.health = health
+
+    def GetDamage(self,damage):
+        self.damage = damage
+
+    #Methods for this class
+    """
+    Attack()
+    Delete()"""
+
+
 
 def MainMenu():
     """This function is the first window the player sees, it provides the instructions for the game
