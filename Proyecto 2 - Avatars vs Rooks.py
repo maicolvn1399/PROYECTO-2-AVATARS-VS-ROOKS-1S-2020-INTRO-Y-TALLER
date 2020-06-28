@@ -14,6 +14,11 @@ import pygame
 import os
 
 
+
+
+
+
+
 class Avatar():
 
     def __init__(self,type,row,column,attackPower,health,hit):
