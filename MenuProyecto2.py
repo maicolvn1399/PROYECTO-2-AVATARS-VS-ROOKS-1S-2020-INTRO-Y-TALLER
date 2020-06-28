@@ -17,12 +17,6 @@ pygame.init()
 fondo1= pygame.image.load("5.png")
 #----constantes--------------------------------
 NEGRO=(2, 22, 34)#formato RGB
-BLANCO=(255,255,255)
-ROJO=(146, 43, 33)
-AZUL=(0,0,255)
-VERDE=(26, 82, 118)
-MORADO=(200,0,190)
-GRIS=(118,119,110)
 COLOR1=(255, 137, 3)
 COLOR2=(118, 228, 0 )
 COLOR3=(242, 164, 0 )
@@ -203,7 +197,7 @@ def instruccion():
                clock.tick(15)
 #----opciones-------------------------------------
 def opciones():
-    font = pygame.font.SysFont("normal", 32)
+    font = pygame.font.SysFont("normal", 40)
 
     input_box = pygame.Rect(boton2,tamboton1)
     color_inactive = pygame.Color('chartreuse3')
