@@ -6,6 +6,7 @@ Profesor: Jason Leitón Jiménez
 Estudiantes: Raquel Lizano y Michael Valverde
 II Proyecto - I Semestre - 2020
 """
+
 import pygame
 import sys
 import random
@@ -15,6 +16,10 @@ import time
 pygame.init()
 #----Fondos------------------------------------
 fondo1= pygame.image.load("5.png")
+
+#----Fondos Niveles------------------------------------
+backgroundLevel1 = pygame.image.load("backgroundLevel1.png")
+
 #----constantes--------------------------------
 NEGRO=(2, 22, 34)#formato RGB
 BLANCO=(255,255,255)
@@ -355,6 +360,10 @@ def cuentainicio(nombre,n):
                  Gameloop2(nombre)
 
 
+#-----Crea matriz---------------------------------
+
+
+
 #----nivel1----------------------------------------
 #entrada= 
 #salida=
@@ -372,7 +381,7 @@ def Gameloop(nombre):
                if event.type==pygame.QUIT:
                     pygame.quit()
                     salir1=True
-               ventana.blit(fondo1,(0,0))
+               ventana.blit(backgroundLevel1,(0,0))
                mensaje("Nivel 1",COLOR3,-200,tam="grande")
                botones("Pausa",ventana,colorboton5,boton5,tamboton1,ID="pausa")
                pygame.display.update()
