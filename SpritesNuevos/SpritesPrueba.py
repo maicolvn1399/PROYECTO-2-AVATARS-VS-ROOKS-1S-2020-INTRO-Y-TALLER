@@ -170,15 +170,12 @@ while run:
         Attack = False
         Die = True
         Idle=False
-   
-
         
     else: 
         Attack = False
         Die = False
         Idle=True
-        
-        
+ 
 
     redrawGameWindow() 
     
