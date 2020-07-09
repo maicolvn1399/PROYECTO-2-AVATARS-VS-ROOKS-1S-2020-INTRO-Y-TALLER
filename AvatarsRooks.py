@@ -1,12 +1,20 @@
+##############################
+"""
+Instituto Tecnológico de Costa Rica
+Área de Ingeniería en Computadores
+CE1102 - Taller de Programación
+Profesor: Jason Leitón Jiménez
+Estudiantes: Raquel Lizano y Michael Valverde
+II Proyecto - I Semestre - 2020
+"""
 import pygame
 import sys
 import random
 from pygame.locals import*
 import time
+import os
 
-pygame.init()
 
-win = pygame.display.set_mode((600,480))
 #----Avatar1=avatar arquero---------------------------------------------------------------------------------------
 Avatar1Die =       [pygame.image.load('Elf_01__DIE_000.png'), pygame.image.load('Elf_01__DIE_001.png'),
                     pygame.image.load('Elf_01__DIE_002.png'), pygame.image.load('Elf_01__DIE_003.png'),
@@ -112,70 +120,148 @@ Rook4Char = pygame.image.load('6.png')
 
 
 #-------------------------------------------------------------------------------------------------------------------
-x = 50
-y = 300
-width = 40
-height = 60
 
 
-clock = pygame.time.Clock()
 
+class Avatar():
+    def __init__(self,type,row,column,attackPower,health,hit):
+        if type == "avatar1":
+            self.type = Avatar1Char
+        elif type == "avatar2":
+            self.type = Avatar2Char
+        elif type == "avatar3":
+            self.type = Avatar3Char
+        else:
+            self.type = Avatar4Char
+        self.row = row
+        self.column = column
+        self.attackPower = attackPower
+        self.health = health
+        self.hit = hit
 
-left = False
-Die = False
-Idle=False
-Count = 0
+    def GetType(self):
+        return self.type
 
-def redrawGameWindow():
-    global Count
-    win.fill((0,0,0))
-    if Count + 1 >= 27:
+    def SetType(self,type):
+        self.type = type
+
+    def GetRow(self):
+        return self.row
+
+    def SetRow(self,row):
+        self.row = row
+
+    def GetColumn(self):
+        return self.column
+
+    def SetColumn(self,column):
+        self.column = column
+
+    def GetAttackPower(self):
+        return self.attackPower
+
+    def SetAttackPower(self,attackPower):
+        self.attackPower = attackPower
+
+    def GetHealth(self):
+        return self.health
+
+    def SetHealth(self,health):
+        self.health = health
+
+    def GetHit(self):
+        return self.hit
+
+    def SetHit(self,hit):
+        self.hit = hit
+
+    def draw(self):
+        Menu.ventana.blit(self,(self.row,self.column))
+
+    def walk(self):
         Count = 0
-        
-    if Attack:  
-        win.blit(Avatar2attack[Count//3], (x,y))
-        Count += 1                          
-    elif Die:
-        win.blit(Avatar2Die[Count//3], (x,y))
-        Count += 1
-    elif Idle:
-        win.blit(Avatar2Char[Count//3], (x,y))
-        Count += 1
-        
-    pygame.display.update() 
-    
+        run = True
+        Idle = False
+
+        if Count + 1 >= 27:
+            Count = 0
+        elif Idle:
+            Menu.ventana.blit(Avatar2Char[Count // 3], (self.row, self.column))
+            Count += 1
 
 
-run = True
+        while run:
+            if run:
+                Idle = True
 
-while run:
-    clock.tick(20)
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            run = False
+    def GetInitialMap(self):
+        map = []
+        for i in range(5):
+            column = []
+            for j in range(9):
+                column.append(0)
+            map.append(column)
+        return map
 
-    keys = pygame.key.get_pressed()
-    
-    if keys[pygame.K_LEFT] : 
-      
-        Attack = True
-        Die = False
-        Idle=False
 
-    elif keys[pygame.K_RIGHT] :  
-      
-        Attack = False
-        Die = True
-        Idle=False
-        
-    else: 
-        Attack = False
-        Die = False
-        Idle=True
- 
 
-    redrawGameWindow() 
-    
-    
-pygame.quit()
+
+
+
+
+class Rooks:
+    def __init__(self,type,row,column,attackPower,cost,health,damage):
+        self.type = type
+        self.row = row
+        self.column = column
+        self.attackPower = attackPower
+        self.cost = cost
+        self.health = health
+        self.damage = damage
+
+    def GetType(self):
+        return self.type
+
+    def SetType(self,type):
+        self.type = type
+
+    def GetRow(self):
+        return self.row
+
+    def SetRow(self,row):
+        self.row = row
+
+    def GetColumn(self):
+        return self.column
+
+    def SetColumn(self,column):
+        self.column = column
+
+    def GetAttackPower(self):
+        return self.attackPower
+
+    def SetAttackPower(self,attackPower):
+        self.attackPower = attackPower
+
+    def GetCost(self):
+        return self.cost
+
+    def SetCost(self,cost):
+        self.cost = cost
+
+    def GetHealth(self):
+        return self.health
+
+    def SetHealth(self,health):
+        self.health = health
+
+    def GetDamage(self,damage):
+        self.damage = damage
+
+    #Methods for this class
+    """
+    Attack()
+    Delete()"""
+
+

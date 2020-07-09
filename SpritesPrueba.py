@@ -131,7 +131,6 @@ def redrawGameWindow():
     win.fill((0,0,0))
     if Count + 1 >= 27:
         Count = 0
-        
     if Attack:  
         win.blit(Avatar2attack[Count//3], (x,y))
         Count += 1                          
@@ -143,8 +142,6 @@ def redrawGameWindow():
         Count += 1
         
     pygame.display.update() 
-    
-
 
 run = True
 
@@ -157,19 +154,19 @@ while run:
 
     keys = pygame.key.get_pressed()
     
-    if keys[pygame.K_LEFT] : 
+    if keys[pygame.K_LEFT] :
       
         Attack = True
         Die = False
         Idle=False
 
-    elif keys[pygame.K_RIGHT] :  
+    elif keys[pygame.K_RIGHT] :
       
         Attack = False
         Die = True
         Idle=False
         
-    else: 
+    else:
         Attack = False
         Die = False
         Idle=True
