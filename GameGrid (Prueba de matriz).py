@@ -1,7 +1,7 @@
 import pygame
 
 
-FLOOR = pygame.image.load('map2.png')
+FLOOR = pygame.image.load('map.png')
 GRIDSIZE = 16 #grid size of the map, eg. map will be 16 * 16, when GRIDSIZE = 16
 BRIGHTBLUE = (0, 170, 255)
 BGCOLOR = BRIGHTBLUE
