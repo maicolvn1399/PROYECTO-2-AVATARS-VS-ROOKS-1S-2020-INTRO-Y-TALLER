@@ -1,6 +1,7 @@
 import pygame
 import sys
 import random
+import os
 from pygame.locals import*
 import time
 
@@ -110,6 +111,27 @@ Rook4attack  =  [pygame.image.load('6.png'), pygame.image.load('7.png'),
 
 Rook4Char = pygame.image.load('6.png')
 
+ShootFire = [pygame.image.load(os.path.join('fireEffect',"1_effect_fire_000.png")),
+                    pygame.image.load(os.path.join('fireEffect',"1_effect_fire_001.png")),
+                    pygame.image.load(os.path.join('fireEffect',"1_effect_fire_002.png")),
+                    pygame.image.load(os.path.join('fireEffect',"1_effect_fire_003.png")),
+                    pygame.image.load(os.path.join('fireEffect',"1_effect_fire_004.png")),
+                    pygame.image.load(os.path.join('fireEffect',"1_effect_fire_005.png")),
+                    pygame.image.load(os.path.join('fireEffect',"1_effect_fire_006.png")),
+                    pygame.image.load(os.path.join('fireEffect',"1_effect_fire_007.png")),
+                    pygame.image.load(os.path.join('fireEffect',"1_effect_fire_008.png")),
+                    pygame.image.load(os.path.join('fireEffect',"1_effect_fire_009.png")),
+                    pygame.image.load(os.path.join('fireEffect',"1_effect_fire_010.png")),
+                    pygame.image.load(os.path.join('fireEffect',"1_effect_fire_011.png")),
+                    pygame.image.load(os.path.join('fireEffect',"1_effect_fire_012.png")),
+                    pygame.image.load(os.path.join('fireEffect',"1_effect_fire_013.png")),
+                    pygame.image.load(os.path.join('fireEffect',"1_effect_fire_014.png")),
+                    pygame.image.load(os.path.join('fireEffect',"1_effect_fire_015.png")),
+                    pygame.image.load(os.path.join('fireEffect',"1_effect_fire_016.png")),
+                    pygame.image.load(os.path.join('fireEffect',"1_effect_fire_017.png")),
+                    pygame.image.load(os.path.join('fireEffect',"1_effect_fire_018.png"))]
+
+
 
 #-------------------------------------------------------------------------------------------------------------------
 x = 50
@@ -122,23 +144,28 @@ clock = pygame.time.Clock()
 
 
 left = False
+Fire = False
 Die = False
 Idle=False
 Count = 0
 
 def redrawGameWindow():
     global Count
+    global C
     win.fill((0,0,0))
     if Count + 1 >= 27:
         Count = 0
     if Attack:  
-        win.blit(Avatar2attack[Count//3], (x,y))
+        win.blit(Avatar2attack[Count//12], (x,y))
         Count += 1                          
     elif Die:
-        win.blit(Avatar2Die[Count//3], (x,y))
+        win.blit(Avatar2Die[Count//12], (x,y))
         Count += 1
     elif Idle:
-        win.blit(Avatar2Char[Count//3], (x,y))
+        win.blit(Avatar2Char[Count//12], (x,y))
+        Count += 1
+    elif Fire:
+        win.blit(ShootFire[Count // 18],(x,y))
         Count += 1
         
     pygame.display.update() 
@@ -161,11 +188,12 @@ while run:
         Idle=False
 
     elif keys[pygame.K_RIGHT] :
-      
+
         Attack = False
         Die = True
         Idle=False
-        
+        Fire = True
+
     else:
         Attack = False
         Die = False

@@ -7,251 +7,408 @@ Estudiantes: Raquel Lizano y Michael Valverde
 II Proyecto - I Semestre - 2020
 """
 
+
 import pygame
 import sys
+import math
+import os
 import random
 from pygame.locals import*
 import time
 
-#----Avatar1=avatar arquero---------------------------------------------------------------------------------------
-from AvatarsRooks import Rooks
+salir1=False
+avatar_knight_list = []
+avatar_archer_list = []
 
-Avatar1Die =       [pygame.image.load('Elf_01__DIE_000.png'), pygame.image.load('Elf_01__DIE_001.png'),
-                    pygame.image.load('Elf_01__DIE_002.png'), pygame.image.load('Elf_01__DIE_003.png'),
-                    pygame.image.load('Elf_01__DIE_004.png'), pygame.image.load('Elf_01__DIE_005.png'),
-                    pygame.image.load('Elf_01__DIE_006.png'), pygame.image.load('Elf_01__DIE_007.png'),
-                    pygame.image.load('Elf_01__DIE_008.png'), pygame.image.load('Elf_01__DIE_009.png')]
+sand_rook_list = []
+rocks_bullet_list = []
+fire_bullet_list = []
+water_bullet_list = []
 
-Avatar1attack  =  [pygame.image.load('Elf_01__ATTACK_000.png'), pygame.image.load('Elf_01__ATTACK_001.png'),
-                   pygame.image.load('Elf_01__ATTACK_002.png'), pygame.image.load('Elf_01__ATTACK_003.png'),
-                   pygame.image.load('Elf_01__ATTACK_004.png'), pygame.image.load('Elf_01__ATTACK_005.png'),
-                   pygame.image.load('Elf_01__ATTACK_006.png'), pygame.image.load('Elf_01__ATTACK_007.png'),
-                   pygame.image.load('Elf_01__ATTACK_008.png'), pygame.image.load('Elf_01__ATTACK_009.png')]
+class SandRook(pygame.sprite.Sprite):
+    def __init__(self,x,y,shootSeconds):
+        self.live = True
+        self.image = pygame.image.load("4.png")
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.price = 100
+        self.attackPower = 4
+        self.health = 14
+        self.shootSeconds = shootSeconds
+        self.shot_sand_count = 0
 
-Avatar1Char =     [pygame.image.load('Elf_01__IDLE_000.png'), pygame.image.load('Elf_01__IDLE_001.png'),
-                   pygame.image.load('Elf_01__IDLE_002.png'), pygame.image.load('Elf_01__IDLE_003.png'),
-                   pygame.image.load('Elf_01__IDLE_004.png'), pygame.image.load('Elf_01__IDLE_005.png'),
-                   pygame.image.load('Elf_01__IDLE_006.png'), pygame.image.load('Elf_01__IDLE_007.png'),
-                   pygame.image.load('Elf_01__IDLE_008.png'), pygame.image.load('Elf_01__IDLE_009.png')]
-
-
-#-----Avatar2=avatar escudero--------------------------------------------------------------------------------------
-Avatar2Die =      [pygame.image.load('Knight_03__DIE_000.png'), pygame.image.load('Knight_03__DIE_001.png'),
-                    pygame.image.load('Knight_03__DIE_002.png'), pygame.image.load('Knight_03__DIE_003.png'),
-                    pygame.image.load('Knight_03__DIE_004.png'), pygame.image.load('Knight_03__DIE_005.png'),
-                    pygame.image.load('Knight_03__DIE_006.png'), pygame.image.load('Knight_03__DIE_007.png'),
-                    pygame.image.load('Knight_03__DIE_008.png'), pygame.image.load('Knight_03__DIE_009.png')]
-
-Avatar2attack  =  [pygame.image.load('Knight_03__ATTACK_000.png'), pygame.image.load('Knight_03__ATTACK_001.png'),
-                   pygame.image.load('Knight_03__ATTACK_002.png'), pygame.image.load('Knight_03__ATTACK_003.png'),
-                   pygame.image.load('Knight_03__ATTACK_004.png'), pygame.image.load('Knight_03__ATTACK_005.png'),
-                   pygame.image.load('Knight_03__ATTACK_006.png'), pygame.image.load('Knight_03__ATTACK_007.png'),
-                   pygame.image.load('Knight_03__ATTACK_008.png'), pygame.image.load('Knight_03__ATTACK_009.png')]
-
-Avatar2Char =     [pygame.image.load('Knight_03__IDLE_000.png'), pygame.image.load('Knight_03__IDLE_001.png'),
-                   pygame.image.load('Knight_03__IDLE_002.png'), pygame.image.load('Knight_03__IDLE_003.png'),
-                   pygame.image.load('Knight_03__IDLE_004.png'), pygame.image.load('Knight_03__IDLE_005.png'),
-                   pygame.image.load('Knight_03__IDLE_006.png'), pygame.image.load('Knight_03__IDLE_007.png'),
-                   pygame.image.load('Knight_03__IDLE_008.png'), pygame.image.load('Knight_03__IDLE_009.png')]
-
-#----Avatar3=avatar lenador---------------------------------------------------------------------------------------
-#este no tenia imagenes para morir y cada lista tiene 12 elementos en vez de 10 como las otras
-
-Avatar3attack  =  [pygame.image.load('Golem_02_Attacking_000.png'), pygame.image.load('Golem_02_Attacking_000.png'),
-                   pygame.image.load('Golem_02_Attacking_002.png'), pygame.image.load('Golem_02_Attacking_003.png'),
-                   pygame.image.load('Golem_02_Attacking_004.png'), pygame.image.load('Golem_02_Attacking_005.png'),
-                   pygame.image.load('Golem_02_Attacking_006.png'), pygame.image.load('Golem_02_Attacking_007.png'),
-                   pygame.image.load('Golem_02_Attacking_008.png'), pygame.image.load('Golem_02_Attacking_009.png'),
-                   pygame.image.load('Golem_02_Attacking_010.png'), pygame.image.load('Golem_02_Attacking_011.png')]
-
-Avatar3Char =     [pygame.image.load('Golem_02_Idle_000.png'), pygame.image.load('Golem_02_Idle_001.png'),
-                   pygame.image.load('Golem_02_Idle_002.png'), pygame.image.load('Golem_02_Idle_003.png'),
-                   pygame.image.load('Golem_02_Idle_004.png'), pygame.image.load('Golem_02_Idle_005.png'),
-                   pygame.image.load('Golem_02_Idle_006.png'), pygame.image.load('Golem_02_Idle_007.png'),
-                   pygame.image.load('Golem_02_Idle_008.png'), pygame.image.load('Golem_02_Idle_009.png'),
-                   pygame.image.load('Golem_02_Idle_010.png'), pygame.image.load('Golem_02_Idle_011.png')]
-
-
-#----Avatar4=avatar canibal---------------------------------------------------------------------------------------
-Avatar4Die =       [pygame.image.load('Troll_01_1_DIE_000.png'), pygame.image.load('Troll_01_1_DIE_001.png'),
-                    pygame.image.load('Troll_01_1_DIE_002.png'), pygame.image.load('Troll_01_1_DIE_003.png'),
-                    pygame.image.load('Troll_01_1_DIE_004.png'), pygame.image.load('Troll_01_1_DIE_005.png'),
-                    pygame.image.load('Troll_01_1_DIE_006.png'), pygame.image.load('Troll_01_1_DIE_007.png'),
-                    pygame.image.load('Troll_01_1_DIE_008.png'), pygame.image.load('Troll_01_1_DIE_009.png')]
-
-Avatar4attack  =   [pygame.image.load('Troll_01_1_ATTACK_000.png'), pygame.image.load('Troll_01_1_ATTACK_001.png'),
-                    pygame.image.load('Troll_01_1_ATTACK_002.png'), pygame.image.load('Troll_01_1_ATTACK_003.png'),
-                    pygame.image.load('Troll_01_1_ATTACK_004.png'), pygame.image.load('Troll_01_1_ATTACK_005.png'),
-                    pygame.image.load('Troll_01_1_ATTACK_006.png'), pygame.image.load('Troll_01_1_ATTACK_007.png'),
-                    pygame.image.load('Troll_01_1_ATTACK_008.png'), pygame.image.load('Troll_01_1_ATTACK_009.png')]
-
-Avatar4Char =      [pygame.image.load('Troll_01_1_IDLE_000.png'), pygame.image.load('Troll_01_1_IDLE_001.png'),
-                    pygame.image.load('Troll_01_1_IDLE_002.png'), pygame.image.load('Troll_01_1_IDLE_003.png'),
-                    pygame.image.load('Troll_01_1_IDLE_004.png'), pygame.image.load('Troll_01_1_IDLE_005.png'),
-                    pygame.image.load('Troll_01_1_IDLE_006.png'), pygame.image.load('Troll_01_1_IDLE_007.png'),
-                    pygame.image.load('Troll_01_1_IDLE_008.png'), pygame.image.load('Troll_01_1_IDLE_009.png')]
-#----Rook1=sand rook----------------------------------------------------------------------------------------------
-
-Rook1attack  =  [pygame.image.load('11.png'), pygame.image.load('13.png'),
-                 pygame.image.load('12.png')]
-
-Rook1Char = pygame.image.load('11.png')
-#falta las bolas de ataque(cambiales el tamaño)
-
-#----Rook2=rock rook----------------------------------------------------------------------------------------------
-
-Rook2attack  =  [pygame.image.load('2.png'), pygame.image.load('3.png'),
-                 pygame.image.load('4.png')]
-
-Rook2Char = pygame.image.load('2.png')
-
-#----Rook3=fire rook-----------------------------------------------------------------------------------------------
-Rook3attack  =  [pygame.image.load('16.png'), pygame.image.load('17.png'),
-                 pygame.image.load('18.png')]
-
-Rook3Char = pygame.image.load('16.png')
-
-#----Rook4=water rook-----------------------------------------------------------------------------------------------
-
-Rook4attack  =  [pygame.image.load('6.png'), pygame.image.load('7.png'),
-                   pygame.image.load('7.png')]
-
-Rook4Char = pygame.image.load('6.png')
-
-
-#-------------------------------------------------------------------------------------------------------------------
-
-
-
-class Avatar():
-    def __init__(self,type,row,column,attackPower,health,hit):
-        if type == "avatar1":
-            self.type = Avatar1Char
-        elif type == "avatar2":
-            self.type = Avatar2Char
-        elif type == "avatar3":
-            self.type = Avatar3Char
+    def load_sand_rook(self):
+        if hasattr(self,"image") and hasattr(self,"rect"):
+            ventana.blit(self.image,self.rect)
         else:
-            self.type = Avatar4Char
-        self.row = 0
-        self.column = column
-        self.attackPower = attackPower
-        self.health = health
-        self.hit = hit
+            print("IMAGE SAND ROOK ERROR")
 
-    def GetType(self):
-        return self.type
+    def shoot_sand(self):
+        should_fire_sand = False
+        for avatar_knight in avatar_knight_list:#Un bucle por cada tipo de avatar
+            if isColliding(avatar_knight.rect.x,avatar_knight.rect.y,self.rect.x,self.rect.y):
+                should_fire_sand = True
 
-    def SetType(self,type):
-        self.type = type
-
-    def GetRow(self):
-        return self.row
-
-    def SetRow(self,row):
-        self.row = row
-
-    def GetColumn(self):
-        return self.column
-
-    def SetColumn(self,column):
-        self.column = column
-
-    def GetAttackPower(self):
-        return self.attackPower
-
-    def SetAttackPower(self,attackPower):
-        self.attackPower = attackPower
-
-    def GetHealth(self):
-        return self.health
-
-    def SetHealth(self,health):
-        self.health = health
-
-    def GetHit(self):
-        return self.hit
-
-    def SetHit(self,hit):
-        self.hit = hit
-
-    def walk(self):
-        Count = 0
-        ventana.blit(self.type[Count // 31],(self.row,self.column))
-        Count += 1
+        if self.live and should_fire_sand:
+            self.shot_sand_count += 1
+            if self.shot_sand_count == 25:
+                sandBullet = SandBullet(self)
+                ventana.sand_bullet_list.append(sandBullet)
+                self.shot_sand_count = 0
 
 
-    def GetInitialMap(self):
-        map = []
-        for i in range(5):
-            column = []
-            for j in range(9):
-                column.append(0)
-            map.append(column)
-        return map
+class SandBullet(pygame.sprite.Sprite):
+    def __init__(self,sandRook):
+        self.live = True
+        self.image = pygame.image.load("sandEffect.png")
+        self.damage = 1
+        self.speed = 5
+        self.rect = self.image.get_rect()
+        self.rect.x = sandRook.rect.x + 60
+        self.rect.y = sandRook.rect.y + 15
 
-class Rooks:
-    def __init__(self,type,row,column,attackPower,cost,health,damage):
-        if type == "rook1":
-             self.type = Rook1attack
-        elif type == "rook2":
-             self.type = Rook2attack
-        elif type == "rook3":
-             self.type = Rook3attack
+    def move_sand_bullet(self):
+        if self.rect.x < WINDOWWIDTH:
+            self.rect.x += self.speed
         else:
-             self.type = Rook4attack
+            self.live = False
 
-        self.row = row
-        self.column = column
-        self.attackPower = attackPower
-        self.cost = cost
-        self.health = health
-        self.damage = damage
+    def hit_avatar(self):
+        for avatar_knight in avatar_knight_list:#bucle para cada tipo de avatar
+            if pygame.sprite.collide_rect(self,avatar_knight):
+                self.live = False
+                avatar_knight.health -= self.damage
 
-    def GetType(self):
-        return self.type
+                if avatar_knight.health <= 0:
+                    avatar_knight.live = False
 
-    def SetType(self,type):
-        self.type = type
+    def display_sand_bullet(self):
+        ventana.blit(self.image,self.rect)
 
-    def GetRow(self):
-        return self.row
+class AvatarKnight(pygame.sprite.Sprite):
+    def __init__(self,x,y):
+        self.image = pygame.image.load("avatarKnight.png")
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.speed = 1
+        self.live = True
+        self.stop = False
+        self.damage = 3
+        self.shoot_sword = False
+        self.shoot_sword_seconds = 15
+        self.health = 10
+        self.seconds = 10
 
-    def SetRow(self,row):
-        self.row = row
+    def move_avatar_knight(self):
+        if self.live and not self.stop:
+            self.rect.x -= self.speed
+            if self.rect.x < -80:
+                salir1 = True
 
-    def GetColumn(self):
-        return self.column
+    def hit_rook(self):
+        for sandrook in sand_rook_list: #hacer un bucle por cada rook
+            if pygame.sprite.collide_rect(self, sandrook):
+                self.stop = True
+                self.damage_rook(sandrook)
 
-    def SetColumn(self,column):
-        self.column = column
+    def damage_rook(self,sandrook):
+        sandrook.health -= self.damage
+        if sandrook.health <= 0:
+            print("eliminar sand rook")
 
-    def GetAttackPower(self):
-        return self.attackPower
+    def display_avatar_knight(self):
+        ventana.blit(self.image,self.rect)
 
-    def SetAttackPower(self,attackPower):
-        self.attackPower = attackPower
+class RockRook(pygame.sprite.Sprite):
+    def __init__(self,x,y,shootSeconds):
+        self.live = True
+        self.image = pygame.image.load("12.png")
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.shootSeconds = shootSeconds
+        self.price = 100
+        self.attackPower = 4
+        self.health = 14
+        self.shot_rocks_count = 0
 
-    def GetCost(self):
-        return self.cost
+    def load_rock_rook(self):
+        if hasattr(self,"image") and hasattr(self,"rect"):
+            ventana.blit(self.image,self.rect)
+        else:
+            print("IMAGE ROCK ROOK ERROR")
 
-    def SetCost(self,cost):
-        self.cost = cost
+    def shoot_rocks(self):
+        should_fire_rocks = False
+        for avatar_knight in avatar_knight_list:
+            if isColliding(avatar_knight.rect.x,avatar_knight.rect.y,self.rect.x,self.rect.y):
+                should_fire_rocks = True
 
-    def GetHealth(self):
-        return self.health
+        if self.live and should_fire_rocks:
+            self.shot_rocks_count += 1
+            if self.shot_rocks_count == 25:
+                rocksBullet = RocksBullet(self)
+                rocks_bullet_list.append(rocksBullet)
+                self.shot_rocks_count = 0
 
-    def SetHealth(self,health):
-        self.health = health
+class  RocksBullet(pygame.sprite.Sprite):
+    def __init__(self,rockRook):
+        self.live = True
+        self.image = pygame.image.load("rockEffect.png")
+        self.damage = 1
+        self.speed = 5
+        self.rect = self.image.get_rect()
+        self.rect.x = rockRook.rect.x + 60
+        self.rect.y = rockRook.rect.y + 15
 
-    def GetDamage(self,damage):
-        self.damage = damage
+    def move_rock_bullet(self):
+        if self.rect.x < WINDOWWIDTH:
+            self.rect.x += self.speed
+        else:
+            self.live = False
 
-    def attack(self):
-        Count = 0
-        ventana.blit(self.type[Count // 3], (self.row, self.column))
-        Count += 1
+    def hit_avatar(self):
+        for avatar_knight in avatar_knight_list:
+            if pygame.sprite.collide_rect(self,avatar_knight):
+                self.live = False
+                avatar_knight.health -= self.damage
 
+                if avatar_knight.health <= 0:
+                    avatar_knight.live = False
+
+    def display_rock_bullet(self):
+        ventana.blit(self.image,self.rect)
+
+
+class FireRook(pygame.sprite.Sprite):
+    def __init__(self,x,y,shootSeconds):
+        self.live = True
+        self.image = pygame.image.load("18.png")
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.price = 150
+        self.attackPower = 8
+        self.health = 16
+        self.shootSeconds = shootSeconds
+        self.shot_fire_count = 0
+
+    def load_fire_rook(self):
+        if hasattr(self,"image") and hasattr(self,"rect"):
+            ventana.blit(self.image,self.rect)
+        else:
+            print("IMAGE FIRE ROOK ERROR")
+
+    def shoot_rock(self):
+        should_fire_fire = False
+        for avatar_knight in avatar_knight_list:
+            if isColliding(avatar_knight.rect.x,avatar_knight.rect.y,self.rect.x,self.rect.y):
+                should_fire_fire = True
+
+        if self.live and should_fire_fire:
+            self.shot_fire_count += 1
+            if self.shot_fire_count == 25:
+                fireBullet = FireBullet(self)
+                fire_bullet_list.append(fireBullet)
+                self.shot_fire_count = 0
+
+class FireBullet(pygame.sprite.Sprite):
+    def __init__(self,fireRook):
+        self.live = True
+        self.image = pygame.image.load("fireEffect.png")
+        self.damage = 1
+        self.speed = 5
+        self.rect = self.image.get_rect()
+        self.rect.x = fireRook.rect.x + 60
+        self.rect.y = fireRook.rect.y + 15
+
+    def move_rock_bullet(self):
+        if self.rect.x < WINDOWWIDTH:
+            self.rect.x += self.speed
+        else:
+            self.live = False
+
+    def hit_avatar(self):
+        for avatar_knight in avatar_knight_list:
+            if pygame.sprite.collide_rect(self,avatar_knight):
+                self.live = False
+                avatar_knight.health -= self.damage
+
+                if avatar_knight.health <= 0:
+                    avatar_knight.live = False
+
+    def display_rock_bullet(self):
+        ventana.blit(self.image,self.rect)
+
+class WaterRook(pygame.sprite.Sprite):
+    def __init__(self,x,y,shootSeconds):
+        self.live = True
+        self.image = pygame.image.load("8.png")
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.price = 150
+        self.attackPower = 8
+        self.health = 16
+        self.shootSeconds = shootSeconds
+        self.shot_water_count = 0
+
+    def load_water_rook(self):
+        if hasattr(self, "image") and hasattr(self, "rect"):
+            ventana.blit(self.image, self.rect)
+        else:
+            print("IMAGE WATER ROOK ERROR")
+
+    def shoot_sand(self):
+        should_fire_water = False
+        for avatar_knight in avatar_knight_list:  # Un bucle por cada tipo de avatar
+            if isColliding(avatar_knight.rect.x, avatar_knight.rect.y, self.rect.x, self.rect.y):
+                should_fire_water = True
+
+        if self.live and should_fire_water:
+            self.shot_water_count_count += 1
+            if self.shot_water_count_count == 25:
+                waterBullet = WaterBullet(self)
+                ventana.sand_bullet_list.append(waterBullet)
+                self.shot_water_count_count = 0
+
+
+class WaterBullet(pygame.sprite.Sprite):
+    def __init__(self,waterRook):
+        self.live = True
+        self.image = pygame.image.load("waterEffect.png")
+        self.damage = 1
+        self.speed = 5
+        self.rect = self.image.get_rect()
+        self.rect.x = waterRook.rect.x + 60
+        self.rect.y = waterRook.rect.y + 15
+
+    def move_water_bullet(self):
+        if self.rect.x < WINDOWWIDTH:
+            self.rect.x += self.speed
+        else:
+            self.live = False
+
+    def hit_avatar(self):
+        for avatar_knight in avatar_knight_list:  # bucle para cada tipo de avatar
+            if pygame.sprite.collide_rect(self, avatar_knight):
+                self.live = False
+                avatar_knight.health -= self.damage
+
+                if avatar_knight.health <= 0:
+                    avatar_knight.live = False
+
+    def display_water_bullet(self):
+        ventana.blit(self.image,self.rect)
+
+
+class AvatarArcher(pygame.sprite.Sprite):
+    def __init__(self,x,y):
+        self.image = pygame.image.load("avatarArcher.png")
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.speed = 1
+        self.live = True
+        self.stop = False
+        self.damage = 2
+        self.shoot_arrow = False
+        self.shoot_arrow_seconds = 10
+        self.health = 5
+        self.seconds = 12
+
+    def move_avatar_archer(self):
+        if self.live and not self.stop:
+            self.rect.x -= self.speed
+            if self.rect.x < -80:
+                salir1 = True
+
+    def hit_rook(self):
+        for sandrook in sand_rook_list:  # hacer un bucle por cada rook
+            if pygame.sprite.collide_rect(self, sandrook):
+                self.stop = True
+                self.damage_rook(sandrook)
+
+    def damage_rook(self, sandrook):
+        sandrook.health -= self.damage
+        if sandrook.health <= 0:
+            print("eliminar sand rook")
+
+    def display_avatar_archer(self):
+        ventana.blit(self.image, self.rect)
+
+
+class AvatarLumberjack(pygame.sprite.Sprite):
+    def __init__(self,x,y):
+        self.image = pygame.image.load("avatarLumberjack.png")
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.speed = 1
+        self.live = True
+        self.stop = False
+        self.damage = 9
+        self.shoot_axe = False
+        self.shoot_axe_seconds = 5
+        self.health = 20
+        self.seconds = 13
+
+    def move_avatar_lumberjack(self):
+        if self.live and not self.stop:
+            self.rect.x -= self.speed
+            if self.rect.x < -80:
+                salir1 = True
+
+    def hit_rook(self):
+        for sandrook in sand_rook_list:  # hacer un bucle por cada rook
+            if pygame.sprite.collide_rect(self, sandrook):
+                self.stop = True
+                self.damage_rook(sandrook)
+
+    def damage_rook(self, sandrook):
+        sandrook.health -= self.damage
+        if sandrook.health <= 0:
+            print("eliminar sand rook")
+
+    def display_avatar_lumberjack(self):
+        ventana.blit(self.image, self.rect)
+
+class AvatarCannibal(pygame.sprite.Sprite):
+    def __init__(self,x,y):
+        self.image = pygame.image.load("avatarCannibal.png")
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.speed = 1
+        self.live = True
+        self.stop = False
+        self.damage = 12
+        self.shoot_stick = False
+        self.shoot_stick_seconds = 3
+        self.health = 25
+        self.seconds = 14
+
+    def move_avatar_cannibal(self):
+        if self.live and not self.stop:
+            self.rect.x -= self.speed
+            if self.rect.x < -80:
+                salir1 = True
+
+    def hit_rook(self):
+        for sandrook in sand_rook_list:  # hacer un bucle por cada rook
+            if pygame.sprite.collide_rect(self, sandrook):
+                self.stop = True
+                self.damage_rook(sandrook)
+
+    def damage_rook(self, sandrook):
+        sandrook.health -= self.damage
+        if sandrook.health <= 0:
+            print("eliminar sand rook")
+
+    def display_avatar_cannibal(self):
+        ventana.blit(self.image, self.rect)
 
 pygame.init()
 #----Fondos------------------------------------
@@ -319,6 +476,34 @@ BG = pygame.image.load("backgroundLevel1.png")
 
 DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
 #---------------------------------------------------
+
+rookFireCard = pygame.image.load("clickableFireRook.jpg")
+rookWaterCard = pygame.image.load("clickableWaterRook.jpg")
+rookSandCard = pygame.image.load("clickableSandRook.jpg")
+rookRockRook = pygame.image.load("clickableRockRook.jpg")
+
+rookFireCardRect = rookFireCard.get_rect()
+rookWaterCardRect = rookWaterCard.get_rect()
+rookSandCardRect = rookSandCard.get_rect()
+rookRockRookRect = rookRockRook.get_rect()
+
+
+
+#----------Fire animation for fire rook--------------
+countSpritesFire = 0
+
+
+def isColliding(enemyX, enemyY, rookXCoord, rookYCoord):
+    """Determines the distance between two objects, gets the coordinates in x and y
+    of the rook and the enemy"""
+    """Code based on 
+    https://www.mathplanet.com/education/algebra-2/conic-sections/distance-between-two-points-and-the-midpoint"""
+
+    distance = math.sqrt((math.pow(enemyX - rookXCoord, 2)) + (math.pow(enemyY - rookYCoord, 2)))
+    if distance < 41:
+        return True
+    else:
+        return False
 
 def objetotexto(text,color,tam):
      if tam=="peque":
@@ -610,7 +795,7 @@ def cuentainicio(nombre,n):
                  Gameloop2(nombre)
 
 
-#-----Crea matriz---------------------------------
+
 
 
 
@@ -626,27 +811,90 @@ def Gameloop(nombre):
      mouseClicked = False
 #----------------------------------------
      salir1=False
-     row = 0
+     global avatar_knight_list
+     avatar_knight_list = []
+
+     global sand_rook_list
+     sand_rook_list = []
+
+     global rocks_bullet_list
+     rocks_bullet_list = []
+
     
 #------bucle de inicio--------------------------
      while not salir1:
           drawBoard()#Dibuja la matriz
-          a = Avatar("avatar2",400,400,10,10,10)
-          a.walk()
-          r = Rooks("rook2",200,200,34,23,12,10)
-          r.attack()
+          r = SandRook(100,100,10)
+          r.load_sand_rook()
 
+          a = AvatarKnight(500,200)
+          a.display_avatar_knight()
+          a.move_avatar_knight()
+
+          archer = AvatarArcher(400,200)
+          archer.display_avatar_archer()
+          archer.move_avatar_archer()
+
+          cannibal = AvatarCannibal(300,200)
+          cannibal.display_avatar_cannibal()
+          cannibal.move_avatar_cannibal()
+
+          lumberjack = AvatarLumberjack(200,200)
+          lumberjack.display_avatar_lumberjack()
+          lumberjack.move_avatar_lumberjack()
+
+
+
+
+
+          s = SandBullet(r)
+          s.display_sand_bullet()
+          s.move_sand_bullet()
+
+          rw = WaterRook(500,300,60)
+          rw.load_water_rook()
+          rwb = WaterBullet(rw)
+          rwb.display_water_bullet()
+          rwb.move_water_bullet()
+
+          rr = RockRook(500,380,60)
+          rr.load_rock_rook()
+          rrb = RocksBullet(rr)
+          rrb.display_rock_bullet()
+          rrb.move_rock_bullet()
+
+          fr = FireRook(500,420,89)
+          fr.load_fire_rook()
+          frb = FireBullet(fr)
+          frb.display_rock_bullet()
+          frb.move_rock_bullet()
 
           pygame.time.delay(100) 
           for event in pygame.event.get():
                if event.type==pygame.QUIT:
                     pygame.quit()
                     salir1=True
-               elif event.type == pygame.MOUSEMOTION:
-                    mousex, mousey = event.pos
+               elif event.type == pygame.MOUSEBUTTONDOWN:
+                   mouseClicked = True
+                   mousex, mousey = pygame.mouse.get_pos()
                elif event.type == pygame.MOUSEBUTTONUP:
-                    mousex, mousey = event.pos
-                    mouseClicked = True
+                   mouseClicked = False
+               elif event.type == pygame.MOUSEMOTION:
+                   mouse_position = pygame.mouse.get_pos()
+
+
+               if mouseClicked and mousex>0 and mousex<80 and mousey>600 and mousey<700:
+                   print("NEW FIRE ROOK CREATED ")
+               if mouseClicked and mousex>80 and mousex<178 and mousey>600 and mousey<695:
+                   print("NEW ROCK ROOK CREATED")
+               if mouseClicked and mousex>172 and mousex<277 and mousey>600 and mousey<693:
+                   print("NEW WATER ROOK CREATED")
+               if mouseClicked and mousex>275 and mousex<385 and mousey>600 and mousey<695:
+                   print("NEW SAND ROOK CREATED")
+
+
+
+
 
 
                #ventana.blit(backgroundLevel1,(0,0))
