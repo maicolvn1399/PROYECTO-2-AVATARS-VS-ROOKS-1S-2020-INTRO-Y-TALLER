@@ -18,6 +18,7 @@ import time
 
 salir1=False
 avatar_knight_list = []
+avatar_archer_list = []
 
 sand_rook_list = []
 rocks_bullet_list = []
@@ -302,6 +303,112 @@ class WaterBullet(pygame.sprite.Sprite):
     def display_water_bullet(self):
         ventana.blit(self.image,self.rect)
 
+
+class AvatarArcher(pygame.sprite.Sprite):
+    def __init__(self,x,y):
+        self.image = pygame.image.load("avatarArcher.png")
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.speed = 1
+        self.live = True
+        self.stop = False
+        self.damage = 2
+        self.shoot_arrow = False
+        self.shoot_arrow_seconds = 10
+        self.health = 5
+        self.seconds = 12
+
+    def move_avatar_archer(self):
+        if self.live and not self.stop:
+            self.rect.x -= self.speed
+            if self.rect.x < -80:
+                salir1 = True
+
+    def hit_rook(self):
+        for sandrook in sand_rook_list:  # hacer un bucle por cada rook
+            if pygame.sprite.collide_rect(self, sandrook):
+                self.stop = True
+                self.damage_rook(sandrook)
+
+    def damage_rook(self, sandrook):
+        sandrook.health -= self.damage
+        if sandrook.health <= 0:
+            print("eliminar sand rook")
+
+    def display_avatar_archer(self):
+        ventana.blit(self.image, self.rect)
+
+
+class AvatarLumberjack(pygame.sprite.Sprite):
+    def __init__(self,x,y):
+        self.image = pygame.image.load("avatarLumberjack.png")
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.speed = 1
+        self.live = True
+        self.stop = False
+        self.damage = 9
+        self.shoot_axe = False
+        self.shoot_axe_seconds = 5
+        self.health = 20
+        self.seconds = 13
+
+    def move_avatar_lumberjack(self):
+        if self.live and not self.stop:
+            self.rect.x -= self.speed
+            if self.rect.x < -80:
+                salir1 = True
+
+    def hit_rook(self):
+        for sandrook in sand_rook_list:  # hacer un bucle por cada rook
+            if pygame.sprite.collide_rect(self, sandrook):
+                self.stop = True
+                self.damage_rook(sandrook)
+
+    def damage_rook(self, sandrook):
+        sandrook.health -= self.damage
+        if sandrook.health <= 0:
+            print("eliminar sand rook")
+
+    def display_avatar_lumberjack(self):
+        ventana.blit(self.image, self.rect)
+
+class AvatarCannibal(pygame.sprite.Sprite):
+    def __init__(self,x,y):
+        self.image = pygame.image.load("avatarCannibal.png")
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.speed = 1
+        self.live = True
+        self.stop = False
+        self.damage = 12
+        self.shoot_stick = False
+        self.shoot_stick_seconds = 3
+        self.health = 25
+        self.seconds = 14
+
+    def move_avatar_cannibal(self):
+        if self.live and not self.stop:
+            self.rect.x -= self.speed
+            if self.rect.x < -80:
+                salir1 = True
+
+    def hit_rook(self):
+        for sandrook in sand_rook_list:  # hacer un bucle por cada rook
+            if pygame.sprite.collide_rect(self, sandrook):
+                self.stop = True
+                self.damage_rook(sandrook)
+
+    def damage_rook(self, sandrook):
+        sandrook.health -= self.damage
+        if sandrook.health <= 0:
+            print("eliminar sand rook")
+
+    def display_avatar_cannibal(self):
+        ventana.blit(self.image, self.rect)
 
 pygame.init()
 #----Fondos------------------------------------
@@ -723,6 +830,23 @@ def Gameloop(nombre):
           a = AvatarKnight(500,200)
           a.display_avatar_knight()
           a.move_avatar_knight()
+
+          archer = AvatarArcher(400,200)
+          archer.display_avatar_archer()
+          archer.move_avatar_archer()
+
+          cannibal = AvatarCannibal(300,200)
+          cannibal.display_avatar_cannibal()
+          cannibal.move_avatar_cannibal()
+
+          lumberjack = AvatarLumberjack(200,200)
+          lumberjack.display_avatar_lumberjack()
+          lumberjack.move_avatar_lumberjack()
+
+
+
+
+
           s = SandBullet(r)
           s.display_sand_bullet()
           s.move_sand_bullet()
