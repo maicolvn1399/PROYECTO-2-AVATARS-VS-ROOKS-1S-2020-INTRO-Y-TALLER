@@ -1303,7 +1303,9 @@ def Gameloop(nombre):
 #----------------------------------------
      salir1=False
      global avatar_knight_list,avatar_lumberjack_list,avatar_archer_list,avatar_cannibal_list
-     avatar_knight_list = []
+     aK = AvatarKnight(300,200)
+     bK = AvatarKnight(350,250)
+     avatar_knight_list = [aK,bK]
      avatar_archer_list = []
      avatar_lumberjack_list = []
      avatar_cannibal_list = []
@@ -1320,9 +1322,9 @@ def Gameloop(nombre):
      water_bullet_list = []
      fire_bullet_list = []
 
-     init_avatar_archer()
-     print(init_avatar_archer())
-     init_avatar_cannibal()
+     #init_avatar_knight()
+     print(avatar_knight_list)
+
 
 
 #------bucle de inicio--------------------------
@@ -1330,8 +1332,8 @@ def Gameloop(nombre):
          drawBoard()
          pygame.time.delay(100)
 
-         load_avatars_archers()
-         load_avatars_cannibals()
+         load_avatars_knights()
+
 
          for event in pygame.event.get():
                if event.type==pygame.QUIT:
