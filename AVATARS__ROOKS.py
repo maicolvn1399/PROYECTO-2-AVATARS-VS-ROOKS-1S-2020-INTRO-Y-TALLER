@@ -1,6 +1,6 @@
 import pygame
 from pygame import *
-from random import randint
+from random import *
 
 #Initialize pygame
 pygame.init()
@@ -21,7 +21,7 @@ HEIGHT = 100
 WHITE = (255,255,255)
 
 #set up rates
-SPAWN_RATE = 360
+SPAWN_RATE = 10000
 FRAME_RATE = 60
 
 #Set up counters
@@ -51,10 +51,24 @@ GAME_WINDOW.blit(BACKGROUND,(0,0))
 
 tile_color = WHITE
 
-#set up enemy
-avatar_archer = image.load("avatarArcher.png")
-avatar_archer_surf = Surface.convert_alpha(avatar_archer)
-AVATAR_ARCHER = transform.scale(avatar_archer_surf,(WIDTH,HEIGHT))
+
+#set up enemies
+avatar_archer_img = image.load("avatarArcher.png")
+#avatar_archer_surf = Surface.convert_alpha(avatar_archer_img)
+AVATAR_ARCHER = avatar_archer_img
+
+avatar_cannibal_img = image.load("avatarCannibal.png")
+AVATAR_CANNIBAL = avatar_cannibal_img
+
+avatar_knight_img = image.load("avatarKnight.png")
+AVATAR_KNIGHT = avatar_knight_img
+
+avatar_lumberjack_img = image.load("avatarLumberjack.png")
+AVATAR_lUMBERJACK = avatar_lumberjack_img
+
+
+
+#transform.scale(avatar_archer_surf,(60,75))
 
 #set up rooks
 water_rook = image.load("waterRook.png")
@@ -69,22 +83,41 @@ sand_rook = image.load("sandRook.png")
 sand_rook_surf = Surface.convert_alpha(sand_rook)
 SAND_ROOK = transform.scale(sand_rook_surf, (WIDTH,HEIGHT))
 
+rock_rook = image.load("rockRook.png")
+rock_rook_surf = Surface.convert_alpha(rock_rook)
+ROCK_ROOK = transform.scale(rock_rook_surf,(WIDTH,HEIGHT))
+
+
+
 #set up classes
 class Avatar_Archer(sprite.Sprite):
-    def __init__(self):
+    def __init__(self,image,attackPower,health,walkSeconds):
         super().__init__()
         self.speed = REG_SPEED
         self.lane = randint(0,4)
         all_avatars_archers.add(self)
-        self.image = AVATAR_ARCHER.copy()
+        self.image = image
+        #AVATAR_ARCHER.copy()
         y = 50 + self.lane * 100
-        self.health = 100
+        self.health = health
+        self.attackPower = attackPower
+        self.walkSeconds = walkSeconds
+        self.stop = False
         self.rect = self.image.get_rect(center=(1100,y))
 
     def update(self,game_window,counters):
         game_window.blit(BACKGROUND,
                          (self.rect.x, self.rect.y), self.rect)
-        self.rect.x -= self.speed
+
+        timer = pygame.time.get_ticks()
+        timerWalk = int(timer/1000)
+
+        if timerWalk%self.walkSeconds == 0 and not self.stop:
+            self.rect.x -= self.speed
+            self.stop = True
+        else:
+            self.stop = False
+
         if self.health <= 0 or self.rect.x <= 100:
             self.kill()
         else:
@@ -129,6 +162,7 @@ class Rook(object):
         self.type = type
         self.cost = cost
         self.type_img = type_img
+        self.rect = self.type_img.get_rect()
 
 class RookApplicator(object):
     def __init__(self):
@@ -242,19 +276,27 @@ while game_running:
             coordinates = mouse.get_pos()
             x = coordinates[0]
             y = coordinates[1]
-
             tile_y = y // 100
             tile_x = x // 100
+            print(tile_y,tile_x)
             rook_applicator.select_tile(tile_grid[tile_y][tile_x],counters)
+
+    avatars = [AVATAR_KNIGHT, AVATAR_CANNIBAL, AVATAR_lUMBERJACK, AVATAR_ARCHER]
 
     #spawn sprites
     if randint(1,SPAWN_RATE) == 1:
-        Avatar_Archer()
+        Avatar_Archer(AVATAR_KNIGHT,3,10,10)
+    elif randint(1,SPAWN_RATE) == 5:
+        Avatar_Archer(AVATAR_ARCHER,2,5,12)
+    elif randint(1,SPAWN_RATE) == 10:
+        Avatar_Archer(AVATAR_CANNIBAL,12,25,14)
+    elif randint(1,SPAWN_RATE) == 15:
+        Avatar_Archer(AVATAR_lUMBERJACK,9,20,13)
+
 
     #set up collision detection
 
     #Draw the background grid
-
     for tile_row in tile_grid:
         for tile in tile_row:
             if bool(tile.rook):
@@ -286,10 +328,14 @@ while game_running:
     for avatar in all_avatars_archers:
         avatar.update(GAME_WINDOW,counters)
 
+
     #update rooks that have been set
     for tile_row in tile_grid:
         for tile in tile_row:
             tile.draw_rook(GAME_WINDOW,rook_applicator)
+
+
+
 
     counters.update(GAME_WINDOW)
 
