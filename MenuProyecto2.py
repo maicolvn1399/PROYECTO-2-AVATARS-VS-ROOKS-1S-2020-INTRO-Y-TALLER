@@ -19,11 +19,31 @@ import time
 salir1=False
 avatar_knight_list = []
 avatar_archer_list = []
+avatar_cannibal_list = []
+avatar_lumberjack_list = []
+
+
 
 sand_rook_list = []
+rock_rook_list = []
+water_rook_list = []
+fire_rook_list = []
+
 rocks_bullet_list = []
 fire_bullet_list = []
 water_bullet_list = []
+sand_bullet_list = []
+
+points = []
+point = []
+map_list = []
+map_points_list = []
+
+temp_map_list = list()
+
+
+
+
 
 class SandRook(pygame.sprite.Sprite):
     def __init__(self,x,y,shootSeconds):
@@ -46,7 +66,7 @@ class SandRook(pygame.sprite.Sprite):
 
     def shoot_sand(self):
         should_fire_sand = False
-        for avatar_knight in avatar_knight_list:#Un bucle por cada tipo de avatar
+        for avatar_knight in avatar_knight_list:#loop for every type of avatar
             if isColliding(avatar_knight.rect.x,avatar_knight.rect.y,self.rect.x,self.rect.y):
                 should_fire_sand = True
 
@@ -56,6 +76,41 @@ class SandRook(pygame.sprite.Sprite):
                 sandBullet = SandBullet(self)
                 ventana.sand_bullet_list.append(sandBullet)
                 self.shot_sand_count = 0
+
+        for avatar_archer in avatar_archer_list:  # Un bucle por cada tipo de avatar
+            if isColliding(avatar_archer.rect.x, avatar_archer.rect.y, self.rect.x, self.rect.y):
+                should_fire_sand = True
+
+        if self.live and should_fire_sand:
+            self.shot_sand_count += 1
+            if self.shot_sand_count == 25:
+                sandBullet = SandBullet(self)
+                ventana.sand_bullet_list.append(sandBullet)
+                self.shot_sand_count = 0
+
+        for avatar_cannibal in avatar_cannibal_list:  # Un bucle por cada tipo de avatar
+            if isColliding(avatar_cannibal.rect.x, avatar_cannibal.rect.y, self.rect.x, self.rect.y):
+                should_fire_sand = True
+
+        if self.live and should_fire_sand:
+            self.shot_sand_count += 1
+            if self.shot_sand_count == 25:
+                sandBullet = SandBullet(self)
+                ventana.sand_bullet_list.append(sandBullet)
+                self.shot_sand_count = 0
+
+        for avatar_lumberjack in avatar_lumberjack_list:  # Un bucle por cada tipo de avatar
+            if isColliding(avatar_lumberjack.rect.x, avatar_lumberjack.rect.y, self.rect.x, self.rect.y):
+                should_fire_sand = True
+
+        if self.live and should_fire_sand:
+            self.shot_sand_count += 1
+            if self.shot_sand_count == 25:
+                sandBullet = SandBullet(self)
+                ventana.sand_bullet_list.append(sandBullet)
+                self.shot_sand_count = 0
+
+
 
 
 class SandBullet(pygame.sprite.Sprite):
@@ -74,7 +129,7 @@ class SandBullet(pygame.sprite.Sprite):
         else:
             self.live = False
 
-    def hit_avatar(self):
+    def hit_avatar1(self):
         for avatar_knight in avatar_knight_list:#bucle para cada tipo de avatar
             if pygame.sprite.collide_rect(self,avatar_knight):
                 self.live = False
@@ -82,6 +137,30 @@ class SandBullet(pygame.sprite.Sprite):
 
                 if avatar_knight.health <= 0:
                     avatar_knight.live = False
+
+        for avatar_archer in avatar_archer_list:#bucle para cada tipo de avatar
+            if pygame.sprite.collide_rect(self,avatar_archer):
+                self.live = False
+                avatar_archer.health -= self.damage
+
+                if avatar_archer.health <= 0:
+                    avatar_knight.live = False
+
+        for avatar_cannibal in avatar_cannibal_list:#bucle para cada tipo de avatar
+            if pygame.sprite.collide_rect(self,avatar_cannibal):
+                self.live = False
+                avatar_cannibal.health -= self.damage
+
+                if avatar_cannibal.health <= 0:
+                    avatar_cannibal.live = False
+
+        for avatar_lumberjack in avatar_lumberjack_list:#bucle para cada tipo de avatar
+            if pygame.sprite.collide_rect(self,avatar_lumberjack):
+                self.live = False
+                avatar_lumberjack.health -= self.damage
+
+                if avatar_lumberjack.health <= 0:
+                    avatar_lumberjack.live = False
 
     def display_sand_bullet(self):
         ventana.blit(self.image,self.rect)
@@ -107,15 +186,30 @@ class AvatarKnight(pygame.sprite.Sprite):
             if self.rect.x < -80:
                 salir1 = True
 
-    def hit_rook(self):
+    def hit_rook1(self):
         for sandrook in sand_rook_list: #hacer un bucle por cada rook
             if pygame.sprite.collide_rect(self, sandrook):
                 self.stop = True
                 self.damage_rook(sandrook)
 
-    def damage_rook(self,sandrook):
-        sandrook.health -= self.damage
-        if sandrook.health <= 0:
+        for rockrook in rock_rook_list: #hacer un bucle por cada rook
+            if pygame.sprite.collide_rect(self, rockrook):
+                self.stop = True
+                self.damage_rook(rockrook)
+
+        for waterrook in water_rook_list: #hacer un bucle por cada rook
+            if pygame.sprite.collide_rect(self, waterrook):
+                self.stop = True
+                self.damage_rook(waterrook)
+
+        for firerook in fire_rook_list:
+            if pygame.sprite.collide_rect(self, firerook):
+                self.stop = True
+                self.damage_rook(firerook)
+
+    def damage_rook(self,rook):
+        rook.health -= self.damage
+        if rook.health <= 0:
             print("eliminar sand rook")
 
     def display_avatar_knight(self):
@@ -153,6 +247,41 @@ class RockRook(pygame.sprite.Sprite):
                 rocks_bullet_list.append(rocksBullet)
                 self.shot_rocks_count = 0
 
+        for avatar_archer in avatar_archer_list:
+            if isColliding(avatar_archer.rect.x,avatar_archer.rect.y,self.rect.x,self.rect.y):
+                should_fire_rocks = True
+
+        if self.live and should_fire_rocks:
+            self.shot_rocks_count += 1
+            if self.shot_rocks_count == 25:
+                rocksBullet = RocksBullet(self)
+                rocks_bullet_list.append(rocksBullet)
+                self.shot_rocks_count = 0
+
+        for avatar_lumberjack in avatar_lumberjack_list:
+            if isColliding(avatar_lumberjack.rect.x,avatar_lumberjack.rect.y,self.rect.x,self.rect.y):
+                should_fire_rocks = True
+
+        if self.live and should_fire_rocks:
+            self.shot_rocks_count += 1
+            if self.shot_rocks_count == 25:
+                rocksBullet = RocksBullet(self)
+                rocks_bullet_list.append(rocksBullet)
+                self.shot_rocks_count = 0
+
+
+        for avatar_cannibal in avatar_cannibal_list:
+            if isColliding(avatar_cannibal.rect.x,avatar_cannibal.rect.y,self.rect.x,self.rect.y):
+                should_fire_rocks = True
+
+        if self.live and should_fire_rocks:
+            self.shot_rocks_count += 1
+            if self.shot_rocks_count == 25:
+                rocksBullet = RocksBullet(self)
+                rocks_bullet_list.append(rocksBullet)
+                self.shot_rocks_count = 0
+
+
 class  RocksBullet(pygame.sprite.Sprite):
     def __init__(self,rockRook):
         self.live = True
@@ -169,7 +298,7 @@ class  RocksBullet(pygame.sprite.Sprite):
         else:
             self.live = False
 
-    def hit_avatar(self):
+    def hit_avatar2(self):
         for avatar_knight in avatar_knight_list:
             if pygame.sprite.collide_rect(self,avatar_knight):
                 self.live = False
@@ -177,6 +306,33 @@ class  RocksBullet(pygame.sprite.Sprite):
 
                 if avatar_knight.health <= 0:
                     avatar_knight.live = False
+
+
+        for avatar_archer in avatar_archer_list:
+            if pygame.sprite.collide_rect(self,avatar_archer):
+                self.live = False
+                avatar_archer.health -= self.damage
+
+                if avatar_archer.health <= 0:
+                    avatar_archer.live = False
+
+
+        for avatar_cannibal in avatar_cannibal_list:
+            if pygame.sprite.collide_rect(self,avatar_cannibal):
+                self.live = False
+                avatar_cannibal.health -= self.damage
+
+                if avatar_cannibal.health <= 0:
+                    avatar_cannibal.live = False
+
+
+        for avatar_lumberjack in avatar_lumberjack_list:
+            if pygame.sprite.collide_rect(self,avatar_lumberjack):
+                self.live = False
+                avatar_lumberjack.health -= self.damage
+
+                if avatar_lumberjack.health <= 0:
+                    avatar_lumberjack.live = False
 
     def display_rock_bullet(self):
         ventana.blit(self.image,self.rect)
@@ -201,10 +357,43 @@ class FireRook(pygame.sprite.Sprite):
         else:
             print("IMAGE FIRE ROOK ERROR")
 
-    def shoot_rock(self):
+    def shoot_fire(self):
         should_fire_fire = False
         for avatar_knight in avatar_knight_list:
             if isColliding(avatar_knight.rect.x,avatar_knight.rect.y,self.rect.x,self.rect.y):
+                should_fire_fire = True
+
+        if self.live and should_fire_fire:
+            self.shot_fire_count += 1
+            if self.shot_fire_count == 25:
+                fireBullet = FireBullet(self)
+                fire_bullet_list.append(fireBullet)
+                self.shot_fire_count = 0
+
+        for avatar_cannibal in avatar_cannibal_list:
+            if isColliding(avatar_cannibal.rect.x,avatar_cannibal.rect.y,self.rect.x,self.rect.y):
+                should_fire_fire = True
+
+        if self.live and should_fire_fire:
+            self.shot_fire_count += 1
+            if self.shot_fire_count == 25:
+                fireBullet = FireBullet(self)
+                fire_bullet_list.append(fireBullet)
+                self.shot_fire_count = 0
+
+        for avatar_archer in avatar_archer_list:
+            if isColliding(avatar_archer.rect.x,avatar_archer.rect.y,self.rect.x,self.rect.y):
+                should_fire_fire = True
+
+        if self.live and should_fire_fire:
+            self.shot_fire_count += 1
+            if self.shot_fire_count == 25:
+                fireBullet = FireBullet(self)
+                fire_bullet_list.append(fireBullet)
+                self.shot_fire_count = 0
+
+        for avatar_lumberjack in avatar_lumberjack_list:
+            if isColliding(avatar_lumberjack.rect.x,avatar_lumberjack.rect.y,self.rect.x,self.rect.y):
                 should_fire_fire = True
 
         if self.live and should_fire_fire:
@@ -224,13 +413,13 @@ class FireBullet(pygame.sprite.Sprite):
         self.rect.x = fireRook.rect.x + 60
         self.rect.y = fireRook.rect.y + 15
 
-    def move_rock_bullet(self):
+    def move_fire_bullet(self):
         if self.rect.x < WINDOWWIDTH:
             self.rect.x += self.speed
         else:
             self.live = False
 
-    def hit_avatar(self):
+    def hit_avatar3(self):
         for avatar_knight in avatar_knight_list:
             if pygame.sprite.collide_rect(self,avatar_knight):
                 self.live = False
@@ -239,7 +428,32 @@ class FireBullet(pygame.sprite.Sprite):
                 if avatar_knight.health <= 0:
                     avatar_knight.live = False
 
-    def display_rock_bullet(self):
+        for avatar_archer in avatar_archer_list:
+            if pygame.sprite.collide_rect(self,avatar_archer):
+                self.live = False
+                avatar_archer.health -= self.damage
+
+                if avatar_archer.health <= 0:
+                    avatar_archer.live = False
+
+        for avatar_cannibal in avatar_cannibal_list:
+            if pygame.sprite.collide_rect(self,avatar_cannibal):
+                self.live = False
+                avatar_cannibal.health -= self.damage
+
+                if avatar_cannibal.health <= 0:
+                    avatar_cannibal.live = False
+
+
+        for avatar_lumberjack in avatar_lumberjack_list:
+            if pygame.sprite.collide_rect(self,avatar_lumberjack):
+                self.live = False
+                avatar_lumberjack.health -= self.damage
+
+                if avatar_lumberjack.health <= 0:
+                    avatar_lumberjack.live = False
+
+    def display_fire_bullet(self):
         ventana.blit(self.image,self.rect)
 
 class WaterRook(pygame.sprite.Sprite):
@@ -261,10 +475,46 @@ class WaterRook(pygame.sprite.Sprite):
         else:
             print("IMAGE WATER ROOK ERROR")
 
-    def shoot_sand(self):
+    def shoot_water(self):
         should_fire_water = False
         for avatar_knight in avatar_knight_list:  # Un bucle por cada tipo de avatar
             if isColliding(avatar_knight.rect.x, avatar_knight.rect.y, self.rect.x, self.rect.y):
+                should_fire_water = True
+
+        if self.live and should_fire_water:
+            self.shot_water_count_count += 1
+            if self.shot_water_count_count == 25:
+                waterBullet = WaterBullet(self)
+                ventana.sand_bullet_list.append(waterBullet)
+                self.shot_water_count_count = 0
+
+
+        for avatar_cannibal in avatar_cannibal_list:  # Un bucle por cada tipo de avatar
+            if isColliding(avatar_cannibal.rect.x, avatar_cannibal.rect.y, self.rect.x, self.rect.y):
+                should_fire_water = True
+
+        if self.live and should_fire_water:
+            self.shot_water_count_count += 1
+            if self.shot_water_count_count == 25:
+                waterBullet = WaterBullet(self)
+                ventana.sand_bullet_list.append(waterBullet)
+                self.shot_water_count_count = 0
+
+
+        for avatar_archer in avatar_archer_list:  # Un bucle por cada tipo de avatar
+            if isColliding(avatar_archer.rect.x, avatar_archer.rect.y, self.rect.x, self.rect.y):
+                should_fire_water = True
+
+        if self.live and should_fire_water:
+            self.shot_water_count_count += 1
+            if self.shot_water_count_count == 25:
+                waterBullet = WaterBullet(self)
+                ventana.sand_bullet_list.append(waterBullet)
+                self.shot_water_count_count = 0
+
+
+        for avatar_lumberjack in avatar_lumberjack_list:  # Un bucle por cada tipo de avatar
+            if isColliding(avatar_lumberjack.rect.x, avatar_lumberjack.rect.y, self.rect.x, self.rect.y):
                 should_fire_water = True
 
         if self.live and should_fire_water:
@@ -291,14 +541,36 @@ class WaterBullet(pygame.sprite.Sprite):
         else:
             self.live = False
 
-    def hit_avatar(self):
+    def hit_avatar4(self):
         for avatar_knight in avatar_knight_list:  # bucle para cada tipo de avatar
             if pygame.sprite.collide_rect(self, avatar_knight):
                 self.live = False
                 avatar_knight.health -= self.damage
-
                 if avatar_knight.health <= 0:
                     avatar_knight.live = False
+
+        for avatar_archer in avatar_knight_list:  # bucle para cada tipo de avatar
+            if pygame.sprite.collide_rect(self, avatar_archer):
+                self.live = False
+                avatar_archer.health -= self.damage
+                if avatar_archer.health <= 0:
+                    avatar_archer.live = False
+
+
+        for avatar_cannibal in avatar_cannibal_list:  # bucle para cada tipo de avatar
+            if pygame.sprite.collide_rect(self, avatar_cannibal):
+                self.live = False
+                avatar_cannibal.health -= self.damage
+                if avatar_cannibal.health <= 0:
+                    avatar_cannibal.live = False
+
+
+        for avatar_lumberjack in avatar_lumberjack_list:  # bucle para cada tipo de avatar
+            if pygame.sprite.collide_rect(self, avatar_lumberjack):
+                self.live = False
+                avatar_lumberjack.health -= self.damage
+                if avatar_lumberjack.health <= 0:
+                    avatar_lumberjack.live = False
 
     def display_water_bullet(self):
         ventana.blit(self.image,self.rect)
@@ -325,15 +597,31 @@ class AvatarArcher(pygame.sprite.Sprite):
             if self.rect.x < -80:
                 salir1 = True
 
-    def hit_rook(self):
+    def hit_rook2(self):
         for sandrook in sand_rook_list:  # hacer un bucle por cada rook
             if pygame.sprite.collide_rect(self, sandrook):
                 self.stop = True
                 self.damage_rook(sandrook)
 
-    def damage_rook(self, sandrook):
-        sandrook.health -= self.damage
-        if sandrook.health <= 0:
+        for rockrook in rock_rook_list:  # hacer un bucle por cada rook
+            if pygame.sprite.collide_rect(self, rockrook):
+                self.stop = True
+                self.damage_rook(rockrook)
+
+
+        for water_rook in water_rook_list:  # hacer un bucle por cada rook
+            if pygame.sprite.collide_rect(self, water_rook):
+                self.stop = True
+                self.damage_rook(water_rook)
+
+        for firerook in fire_rook_list:  # hacer un bucle por cada rook
+            if pygame.sprite.collide_rect(self, firerook):
+                self.stop = True
+                self.damage_rook(firerook)
+
+    def damage_rook(self, rook):
+        rook.health -= self.damage
+        if rook.health <= 0:
             print("eliminar sand rook")
 
     def display_avatar_archer(self):
@@ -361,15 +649,30 @@ class AvatarLumberjack(pygame.sprite.Sprite):
             if self.rect.x < -80:
                 salir1 = True
 
-    def hit_rook(self):
+    def hit_rook3(self):
         for sandrook in sand_rook_list:  # hacer un bucle por cada rook
             if pygame.sprite.collide_rect(self, sandrook):
                 self.stop = True
                 self.damage_rook(sandrook)
 
-    def damage_rook(self, sandrook):
-        sandrook.health -= self.damage
-        if sandrook.health <= 0:
+        for rockrook in rock_rook_list:  # hacer un bucle por cada rook
+            if pygame.sprite.collide_rect(self, rockrook):
+                self.stop = True
+                self.damage_rook(rockrook)
+
+        for waterrook in water_rook_list:  # hacer un bucle por cada rook
+            if pygame.sprite.collide_rect(self, waterrook):
+                self.stop = True
+                self.damage_rook(waterrook)
+
+        for firerook in fire_rook_list:  # hacer un bucle por cada rook
+            if pygame.sprite.collide_rect(self, firerook):
+                self.stop = True
+                self.damage_rook(firerook)
+
+    def damage_rook(self, rook):
+        rook.health -= self.damage
+        if rook.health <= 0:
             print("eliminar sand rook")
 
     def display_avatar_lumberjack(self):
@@ -396,19 +699,207 @@ class AvatarCannibal(pygame.sprite.Sprite):
             if self.rect.x < -80:
                 salir1 = True
 
-    def hit_rook(self):
+    def hit_rook4(self):
         for sandrook in sand_rook_list:  # hacer un bucle por cada rook
             if pygame.sprite.collide_rect(self, sandrook):
                 self.stop = True
                 self.damage_rook(sandrook)
 
-    def damage_rook(self, sandrook):
-        sandrook.health -= self.damage
-        if sandrook.health <= 0:
+        for rockrook in rock_rook_list:  # hacer un bucle por cada rook
+            if pygame.sprite.collide_rect(self, rockrook):
+                self.stop = True
+                self.damage_rook(rockrook)
+
+        for waterrook in water_rook_list:  # hacer un bucle por cada rook
+            if pygame.sprite.collide_rect(self, waterrook):
+                self.stop = True
+                self.damage_rook(waterrook)
+
+        for firerook in fire_rook_list:  # hacer un bucle por cada rook
+            if pygame.sprite.collide_rect(self, firerook):
+                self.stop = True
+                self.damage_rook(firerook)
+
+
+    def damage_rook(self, rook):
+        rook.health -= self.damage
+        if rook.health <= 0:
             print("eliminar sand rook")
+            rook.stop = True
 
     def display_avatar_cannibal(self):
         ventana.blit(self.image, self.rect)
+
+
+class Map():
+
+    map_names_list = ["map1.png","map2.png"]
+
+    def __init__(self,x,y,img_index):
+        self.image = pygame.image.load(Map.map_names_list[img_index])
+        self.position = (x,y)
+
+        self.rook_can_be_placed = True
+
+    def load_map(self):
+        ventana.blit(self.image,self.position)
+
+
+def init_rook_points():
+    for y in range(1,6):
+        points = []
+        for x in range(9):
+            point = (x,y)
+            points.append(point)
+        map_points_list.append(points)
+
+def init_map():
+    global temp_map_list
+    for points in map_points_list:
+        temp_map_list = list()
+        for point in points:
+            if (point[0] + point[1])%2 == 0:
+                map = Map(point[0] * 100,point[1] * 100,0)
+            else:
+                map = Map(point[0] * 100,point[1] * 100,1)
+            temp_map_list.append(map)
+        map_list.append(temp_map_list)
+
+def load_map():
+    for temp_map_list in map_list:
+        for map in temp_map_list:
+            map.load_map()
+
+def load_rooks():
+    for sandrook in sand_rook_list:
+        if sandrook.live:
+            if isinstance(sandrook,SandRook):
+                sandrook.load_sand_rook()
+                sandrook.shoot_sand()
+        else:
+            sand_rook_list.remove(sandrook)
+
+    for rockrook in rock_rook_list:
+        if rockrook.live:
+            if isinstance(rockrook,RockRook):
+                rockrook.load_rock_rook()
+                rockrook.shoot_rocks()
+            else:
+                rock_rook_list.remove(rockrook)
+
+    for waterrook in water_rook_list:
+        if waterrook.live:
+            if isinstance(waterrook,WaterRook):
+                waterrook.load_water_rook()
+                waterrook.shoot_water()
+            else:
+                water_rook_list.remove(waterrook)
+
+    for firerook in fire_rook_list:
+        if firerook.live:
+            if isinstance(firerook,FireRook):
+                firerook.load_fire_rook()
+                firerook.shoot_fire()
+            else:
+                fire_rook_list.remove(firerook)
+
+
+def load_bullets():
+    for sb in sand_bullet_list:
+        if sb.live:
+            sb.display_sand_bullet()
+            sb.move_sand_bullet()
+            sb.hit_avatar1()
+        else:
+            sand_bullet_list.remove(sb)
+
+    for rb in rocks_bullet_list:
+        if rb.live:
+            rb.display_rock_bullet()
+            rb.move_rock_bullet()
+            rb.hit_avatar2()
+        else:
+            rocks_bullet_list.remove(rb)
+
+    for wb in water_bullet_list:
+        if wb.live:
+            wb.display_water_bullet()
+            wb.move_water_bullet()
+            wb.hit_avatar4()
+        else:
+            water_bullet_list.remove(wb)
+
+    for fb in fire_bullet_list:
+        if fb.live:
+            fb.display_fire_bullet()
+            fb.move_fire_bullet()
+            fb.hit_avatar3()
+
+        else:
+            fire_bullet_list.remove(fb)
+
+def init_avatar_knight():
+    for i in range(1,6):
+        dis = random.randint(1,5) * 200
+        newAvatarKnight = AvatarKnight(800+dis,i*80)
+        avatar_knight_list.append(newAvatarKnight)
+
+def init_avatar_cannibal():
+    for i in range(1,6):
+        dis = random.randint(1, 5) * 200
+        newAvatarCannibal = AvatarCannibal(800 + dis, i * 80)
+        avatar_cannibal_list.append(newAvatarCannibal)
+
+
+def init_avatar_archer():
+    for i in range(1,6):
+        dis = random.randint(1, 5) * 200
+        newAvatarArcher = AvatarArcher(800 + dis, i * 80)
+        avatar_archer_list.append(newAvatarArcher)
+
+
+def init_avatar_lumberjack():
+    for i in range(1,6):
+        dis = random.randint(1, 5) * 200
+        newAvatarLumberjack = AvatarLumberjack(800 + dis, i * 80)
+        avatar_lumberjack_list.append(newAvatarLumberjack)
+
+def load_avatars_knights():
+    for av in avatar_knight_list:
+        if av.live:
+            av.display_avatar_knight()
+            av.move_avatar_knight()
+            av.hit_rook1()
+        else:
+            avatar_knight_list.remove(av)
+
+def load_avatars_cannibals():
+    for a in avatar_cannibal_list:
+        if a.live:
+            a.display_avatar_cannibal()
+            a.move_avatar_cannibal()
+            a.hit_rook4()
+        else:
+            avatar_cannibal_list.remove(a)
+
+def load_avatars_archers():
+    for a in avatar_archer_list:
+        if a.live:
+            a.display_avatar_archer()
+            a.move_avatar_archer()
+            a.hit_rook2()
+        else:
+            avatar_archer_list.remove(a)
+
+def load_avatars_lumberjacks():
+    for a in avatar_lumberjack_list:
+        if a.live:
+            a.display_avatar_lumberjack()
+            a.move_avatar_lumberjack()
+            a.hit_rook3()
+        else:
+            avatar_lumberjack_list.remove(a)
+
 
 pygame.init()
 #----Fondos------------------------------------
@@ -752,7 +1243,7 @@ def cuentainicio(nombre,n):
                  mensaje("1",COLOR11,tam="gigante")
                  pygame.display.update()
                  clock.tick(1)
-                 ventana.blit(fondo1,(0,0)) 
+                 ventana.blit(fondo1,(0,0))
                  mensaje("VAMOS",COLOR11,tam="gigante")
                  pygame.display.update()
                  clock.tick(1)
@@ -811,103 +1302,90 @@ def Gameloop(nombre):
      mouseClicked = False
 #----------------------------------------
      salir1=False
-     global avatar_knight_list
-     avatar_knight_list = []
+     global avatar_knight_list,avatar_lumberjack_list,avatar_archer_list,avatar_cannibal_list
+     aK = AvatarKnight(300,200)
+     bK = AvatarKnight(350,250)
+     avatar_knight_list = [aK,bK]
+     avatar_archer_list = []
+     avatar_lumberjack_list = []
+     avatar_cannibal_list = []
 
-     global sand_rook_list
+     global sand_rook_list,rock_rook_list,water_rook_list,fire_rook_list
      sand_rook_list = []
+     rock_rook_list = []
+     water_rook_list = []
+     fire_rook_list = []
 
-     global rocks_bullet_list
+     global rocks_bullet_list,sand_bullet_list,water_bullet_list,fire_bullet_list
      rocks_bullet_list = []
+     sand_bullet_list = []
+     water_bullet_list = []
+     fire_bullet_list = []
 
-    
+     #init_avatar_knight()
+     print(avatar_knight_list)
+
+
+
 #------bucle de inicio--------------------------
      while not salir1:
-          drawBoard()#Dibuja la matriz
-          r = SandRook(100,100,10)
-          r.load_sand_rook()
+         drawBoard()
+         pygame.time.delay(100)
 
-          a = AvatarKnight(500,200)
-          a.display_avatar_knight()
-          a.move_avatar_knight()
-
-          archer = AvatarArcher(400,200)
-          archer.display_avatar_archer()
-          archer.move_avatar_archer()
-
-          cannibal = AvatarCannibal(300,200)
-          cannibal.display_avatar_cannibal()
-          cannibal.move_avatar_cannibal()
-
-          lumberjack = AvatarLumberjack(200,200)
-          lumberjack.display_avatar_lumberjack()
-          lumberjack.move_avatar_lumberjack()
+         load_avatars_knights()
 
 
-
-
-
-          s = SandBullet(r)
-          s.display_sand_bullet()
-          s.move_sand_bullet()
-
-          rw = WaterRook(500,300,60)
-          rw.load_water_rook()
-          rwb = WaterBullet(rw)
-          rwb.display_water_bullet()
-          rwb.move_water_bullet()
-
-          rr = RockRook(500,380,60)
-          rr.load_rock_rook()
-          rrb = RocksBullet(rr)
-          rrb.display_rock_bullet()
-          rrb.move_rock_bullet()
-
-          fr = FireRook(500,420,89)
-          fr.load_fire_rook()
-          frb = FireBullet(fr)
-          frb.display_rock_bullet()
-          frb.move_rock_bullet()
-
-          pygame.time.delay(100) 
-          for event in pygame.event.get():
+         for event in pygame.event.get():
                if event.type==pygame.QUIT:
                     pygame.quit()
                     salir1=True
                elif event.type == pygame.MOUSEBUTTONDOWN:
-                   mouseClicked = True
-                   mousex, mousey = pygame.mouse.get_pos()
-               elif event.type == pygame.MOUSEBUTTONUP:
-                   mouseClicked = False
-               elif event.type == pygame.MOUSEMOTION:
-                   mouse_position = pygame.mouse.get_pos()
+                   x = event.pos[0] // 90
+                   y = event.pos[1] // 90
+                   map = map_list[y-1][x]
+                   print(map.position)
+
+                   if event.button == 1:
+                       if map.rook_can_be_placed:
+                           rook = SandRook(map.position[0],map.position[1],5)
+                           sand_rook_list.append(rook)
+                           bullet = SandBullet(rook)
+                           sand_bullet_list.append()
+                           map.rook_can_be_placed = False
+                   elif event.button == 3:
+                       if map.rook_can_be_placed:
+                           waterRook = WaterRook(map.position[0],map.position[1],5)
+                           water_rook_list.append(waterRook)
+                           waterBullet = WaterBullet(waterRook)
+                           water_bullet_list.append(waterBullet)
+                           map.rook_can_be_placed = False
+
+         #ventana.fill(BGCOLOR)
+         #ventana.blit(BG, (0, 0))
 
 
-               if mouseClicked and mousex>0 and mousex<80 and mousey>600 and mousey<700:
-                   print("NEW FIRE ROOK CREATED ")
-               if mouseClicked and mousex>80 and mousex<178 and mousey>600 and mousey<695:
-                   print("NEW ROCK ROOK CREATED")
-               if mouseClicked and mousex>172 and mousex<277 and mousey>600 and mousey<693:
-                   print("NEW WATER ROOK CREATED")
-               if mouseClicked and mousex>275 and mousex<385 and mousey>600 and mousey<695:
-                   print("NEW SAND ROOK CREATED")
 
 
-
-
-
+               #if mouseClicked and mousex>0 and mousex<80 and mousey>600 and mousey<700:
+                   #print("NEW FIRE ROOK CREATED ")
+               #if mouseClicked and mousex>80 and mousex<178 and mousey>600 and mousey<695:
+                   #print("NEW ROCK ROOK CREATED")
+               #if mouseClicked and mousex>172 and mousex<277 and mousey>600 and mousey<693:
+                   #print("NEW WATER ROOK CREATED")
+               #if mouseClicked and mousex>275 and mousex<385 and mousey>600 and mousey<695:
+                   #print("NEW SAND ROOK CREATED")
 
                #ventana.blit(backgroundLevel1,(0,0))
-               mensaje("Nivel 1",COLOR3,-200,tam="grande")
-               botones("Pausa",ventana,colorboton5,boton5,tamboton1,ID="pausa")
-               pygame.display.update()
-               clock.tick(60)
+         mensaje("Nivel 1",COLOR3,-200,tam="grande")
+         botones("Pausa",ventana,colorboton5,boton5,tamboton1,ID="pausa")
+         pygame.display.update()
+         clock.tick(60)
 ##-------condicion de game over--------------------
 ##          if vida<=0:
 ##                GameOver(nombre,puntos)
         
-          pygame.display.update()
-          clock.tick(60)
+         pygame.display.update()
+         clock.tick(60)
            
 #----nivel2----------------------------------------
 """
