@@ -7,6 +7,7 @@ import time
 pygame.init()
 
 win = pygame.display.set_mode((600,480))
+
 #----Avatar1=avatar arquero---------------------------------------------------------------------------------------
 Avatar1Die =       [pygame.image.load('Elf_01__DIE_000.png'), pygame.image.load('Elf_01__DIE_001.png'),
                     pygame.image.load('Elf_01__DIE_002.png'), pygame.image.load('Elf_01__DIE_003.png'),
@@ -23,7 +24,7 @@ Avatar1attack  =  [pygame.image.load('Elf_01__ATTACK_000.png'), pygame.image.loa
 Avatar1Char =     [pygame.image.load('Elf_01__IDLE_000.png'), pygame.image.load('Elf_01__IDLE_001.png'),
                    pygame.image.load('Elf_01__IDLE_002.png'), pygame.image.load('Elf_01__IDLE_003.png'),
                    pygame.image.load('Elf_01__IDLE_004.png'), pygame.image.load('Elf_01__IDLE_005.png'),
-                   pygame.image.load('Elf_01__IDLE_006.png'), pygame.image.load('Elf_01__IDLE_007.png'),
+                   pygame.image.load('Elf_01__IDLE_006.png'),
                    pygame.image.load('Elf_01__IDLE_008.png'), pygame.image.load('Elf_01__IDLE_009.png')]
 
 
@@ -45,6 +46,7 @@ Avatar2Char =     [pygame.image.load('Knight_03__IDLE_000.png'), pygame.image.lo
                    pygame.image.load('Knight_03__IDLE_004.png'), pygame.image.load('Knight_03__IDLE_005.png'),
                    pygame.image.load('Knight_03__IDLE_006.png'), pygame.image.load('Knight_03__IDLE_007.png'),
                    pygame.image.load('Knight_03__IDLE_008.png'), pygame.image.load('Knight_03__IDLE_009.png')]
+
 
 #----Avatar3=avatar lenador---------------------------------------------------------------------------------------
 #este no tenia imagenes para morir y cada lista tiene 12 elementos en vez de 10 como las otras
@@ -126,21 +128,24 @@ Die = False
 Idle=False
 Count = 0
 
-def redrawGameWindow():
+def redrawGameWindow(x,y):
     global Count
-    win.fill((0,0,0))
+    
+    win.fill((0,0,0))  
     if Count + 1 >= 27:
         Count = 0
         
     if Attack:  
-        win.blit(Avatar2attack[Count//3], (x,y))
+        win.blit(Avatar4attack[Count//3], (x,y))
         Count += 1                          
     elif Die:
-        win.blit(Avatar2Die[Count//3], (x,y))
+        win.blit(Avatar4Die[Count//3], (x,y))
         Count += 1
     elif Idle:
-        win.blit(Avatar2Char[Count//3], (x,y))
+        win.blit(Avatar4Char[Count//3], (x,y))
         Count += 1
+       
+        
         
     pygame.display.update() 
     
@@ -149,6 +154,7 @@ def redrawGameWindow():
 run = True
 
 while run:
+    tiempo =pygame.time.get_ticks()
     clock.tick(20)
 
     for event in pygame.event.get():
@@ -157,7 +163,7 @@ while run:
 
     keys = pygame.key.get_pressed()
     
-    if keys[pygame.K_LEFT] : 
+    if (tiempo//1000)%10==0: 
       
         Attack = True
         Die = False
@@ -168,14 +174,19 @@ while run:
         Attack = False
         Die = True
         Idle=False
+   
+
         
     else: 
         Attack = False
         Die = False
         Idle=True
- 
+        
+        
 
-    redrawGameWindow() 
+    redrawGameWindow(x,50) 
     
+    if (tiempo//1000)%15==0:
+        x+=5
     
 pygame.quit()
