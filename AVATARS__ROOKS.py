@@ -4,6 +4,7 @@ from random import *
 
 #Initialize pygame
 pygame.init()
+font.init()
 
 #set up a clock
 clock = time.Clock()
@@ -38,7 +39,11 @@ REG_SPEED = 2
 SLOW_SPEED = 1
 
 rock_rook_coordinates = []
-FIRE_RATE = 60
+sand_rook_coordinates = []
+fire_rook_coordinates = []
+water_rook_coordinates = []
+
+FIRE_RATE = 600
 
 #____________load assets__________________
 
@@ -94,8 +99,24 @@ ROCK_ROOK = transform.scale(rock_rook_surf,(WIDTH,HEIGHT))
 #set up bullets
 sand_bullet_img = image.load("sandEffect.png")
 sand_bullet_surf = Surface.convert_alpha(sand_bullet_img)
-SAND_BULLET = transform.scale(sand_rook_surf,(30,30))
+SAND_BULLET = transform.scale(sand_bullet_surf,(30,30))
 
+water_bullet_img = image.load("waterEffect.png")
+water_bullet_surf = Surface.convert_alpha(water_bullet_img)
+WATER_BULLET = transform.scale(water_bullet_surf,(30,30))
+
+rock_bullet_img = image.load("rockEffect.png")
+rock_bullet_surf = Surface.convert_alpha(rock_bullet_img)
+ROCK_BULLET = transform.scale(rock_bullet_surf,(30,30))
+
+fire_bullet_img = image.load("fireEffect.png")
+fire_bullet_surf = Surface.convert_alpha(fire_bullet_img)
+FIRE_BULLET = transform.scale(fire_bullet_surf,(30,30))
+
+#attacks from avatars images
+arrow_bullet_img = image.load("arrow_bullet.png")
+arrow_bullet_surf = Surface.convert_alpha(arrow_bullet_img)
+ARROW = transform.scale(arrow_bullet_surf,(75,15))
 
 #image for explosion
 explosion_img = image.load("explosion.png")
@@ -118,6 +139,12 @@ class Avatar_Archer(sprite.Sprite):
         self.rect = self.image.get_rect(center=(1100,y))
         self.despawn_wait = None
 
+    def getX(self):
+        return self.rect.x
+
+    def getY(self):
+        return self.rect.y
+
     def update(self,game_window,counters):
         game_window.blit(BACKGROUND,
                          (self.rect.x, self.rect.y), self.rect)
@@ -126,15 +153,35 @@ class Avatar_Archer(sprite.Sprite):
         timerWalk = int(timer/1000)
 
         if timerWalk%self.walkSeconds == 0 and not self.stop:
-            self.rect.x -= self.speed
+            self.rect.x -= self.speed*2.1
             self.stop = True
         else:
             self.stop = False
 
-        isColliding = sprite.spritecollide(self,all_bullets,True)
-        if isColliding is not None:
-            for bullet in isColliding:
-                self.health -= 10
+        #isColliding = sprite.spritecollide(self,all_bullets,True)
+        #if isColliding is not None:
+            #for bullet in isColliding:
+                #self.health -= -1
+
+        isCollidingWithFireBullet = sprite.spritecollide(self,all_fire_bullets,True)
+        if isCollidingWithFireBullet is not None:
+            for bullet in isCollidingWithFireBullet:
+                self.health -= 8
+
+        isCollidingWithWaterBullet = sprite.spritecollide(self,all_water_bullets,True)
+        if isCollidingWithWaterBullet is not None:
+            for bullet in isCollidingWithWaterBullet:
+                self.health -= 8
+
+        isCollidingWithRockBullet = sprite.spritecollide(self,all_rock_bullets,True)
+        if isCollidingWithRockBullet is not None:
+            for bullet in isCollidingWithRockBullet:
+                self.health -= 4
+
+        isCollidingWithSandBullet = sprite.spritecollide(self,all_sand_bullets,True)
+        if isCollidingWithSandBullet is not None:
+            for bullet in isCollidingWithSandBullet:
+                self.health -= 2
 
         if self.rect.x <= 100:
             counters.enemies_passed += 1
@@ -152,9 +199,6 @@ class Avatar_Archer(sprite.Sprite):
             self.despawn_wait -= 1
         game_window.blit(self.image,(self.rect.x,self.rect.y))
 
-
-
-
     def attack(self,tile):
         if tile.rook == WATERrook:
             self.speed = SLOW_SPEED
@@ -162,8 +206,6 @@ class Avatar_Archer(sprite.Sprite):
             self.health -= 1
         elif tile.rook == ROCKrook:
             self.health = 0
-
-
 
 
 class Counters(object):
@@ -186,7 +228,7 @@ class Counters(object):
 
     def draw_money(self,game_window):
         if bool(self.money_rect):
-            game_window.blit(game_window,(self.money_rect.x,self.money_rect.y),self.money_rect)
+            game_window.blit(BACKGROUND,(self.money_rect.x,self.money_rect.y),self.money_rect)
         money_surface = self.display_font.render(str(self.enemy_money),True,WHITE)
         self.money_rect = money_surface.get_rect()
         self.money_rect.x = WINDOW_WIDTH - 50
@@ -195,9 +237,8 @@ class Counters(object):
 
     def draw_enemies_passed(self,game_window):
         if bool(self.enemies_passed_rect):
-            game_window.blit(GAME_WINDOW,
+            game_window.blit(BACKGROUND,
                              (self.enemies_passed_rect.x,self.enemies_passed_rect.y),self.enemies_passed_rect)
-
 
             enemies_passed_surf = self.display_font.render(str(self.enemies_passed),True,WHITE)
             self.enemies_passed_rect = enemies_passed_surf.get_rect()
@@ -208,7 +249,7 @@ class Counters(object):
 
     def draw_timer(self,game_window):
         if bool(self.timer_rect):
-            game_window.blit(game_window,
+            game_window.blit(BACKGROUND,
                              (self.timer_rect.x, self.timer_rect.y),self.timer_rect)
             timer_surf = self.display_font.render(str(WIN_TIME - self.loop_count // FRAME_RATE),True,WHITE)
             self.timer_rect = timer_surf.get_rect()
@@ -223,19 +264,37 @@ class Counters(object):
         self.draw_enemies_passed(game_window)
         self.draw_timer(game_window)
         self.update_rock_rook()
+        self.update_fire_rook()
+        self.update_water_rook()
+        self.update_sand_rook()
 
     def update_rock_rook(self):
         for location in rock_rook_coordinates:
             if self.loop_count%self.fire_rate == 0:
-                Bullets(location)
+                Bullets(location,"ROCK_ROOK")
 
-class Rook(object):
+    def update_fire_rook(self):
+        for location in fire_rook_coordinates:
+            if self.loop_count%self.fire_rate == 0:
+                Bullets(location,"FIRE_ROOK")
+
+    def update_water_rook(self):
+        for location in water_rook_coordinates:
+            if self.loop_count%self.fire_rate == 0:
+                Bullets(location,"WATER_ROOK")
+
+    def update_sand_rook(self):
+        for location in sand_rook_coordinates:
+            if self.loop_count%self.fire_rate == 0:
+                Bullets(location,"SAND_ROOK")
+
+
+class Rook(sprite.Sprite):
     def __init__(self,type,cost,type_img):
         self.type = type
         self.cost = cost
         self.type_img = type_img
         self.rect = self.type_img.get_rect()
-        self.bullet = image.load("waterEffect.png")
         self.bullet_speed = 1
         self.bullet_stop = False
 
@@ -247,9 +306,15 @@ class RookApplicator(object):
         if rook.cost <= counters.enemy_money:
             self.selected = rook
 
-
     def select_tile(self,tile,counters):
         self.selected = tile.set_rook(self.selected,counters)
+
+class RookRemover(object):
+    def __init__(self):
+        self.selected = None
+
+    def select_tile(self,tile,counters):
+        self.selected = tile.unset_rook(self.selected,counters)
 
 
 class BackgroundTile(sprite.Sprite):
@@ -265,13 +330,23 @@ class PlayTile(BackgroundTile):
             self.rook = rook
             if rook == SANDrook:
                 counters.money_booster += 1
+                sand_rook_coordinates.append((self.rect.x,self.rect.y))
             if rook == ROCKrook:
                 rock_rook_coordinates.append((self.rect.x,self.rect.y))
+            if rook == WATERrook:
+                water_rook_coordinates.append((self.rect.x,self.rect.y))
+            if rook == FIRErook:
+                fire_rook_coordinates.append((self.rect.x,self.rect.y))
         return None
 
     def draw_rook(self,game_window,rook_applicator):
         if bool(self.rook):
             game_window.blit(self.rook.type_img,(self.rect.x,self.rect.y))
+
+    def unset_rook(self,rook,counters):
+            if rook == ROCKrook:
+                rook.kill()
+
 
 class ButtonTile(BackgroundTile):
     def set_rook(self,rook,counters):
@@ -286,7 +361,8 @@ class ButtonTile(BackgroundTile):
                 draw.rect(game_window,(238,190,47),
                           (self.rect.x,self.rect.y,WIDTH,HEIGHT),5)
 
-
+    def undraw(self,game_window,rook_remover):
+        pass
 
 class InactiveTiles(BackgroundTile):
     def set_rook(self,rook,counters):
@@ -295,30 +371,76 @@ class InactiveTiles(BackgroundTile):
     def draw_rook(self,game_window,rook_applicator ):
         pass
 
+    def undraw(self,game_window,rook_remover):
+        pass
+
 class Bullets(sprite.Sprite):
-    def __init__(self,coordinates):
+    def __init__(self,coordinates,bullet_type):
         super().__init__()
-        self.image = SAND_BULLET
-        self.speed = REG_SPEED
+        self.bullet_type = bullet_type
+        if self.bullet_type == "ROCK_ROOK":
+            self.image_bullet = ROCK_BULLET
+            all_rock_bullets.add(self)
+        elif self.bullet_type == "WATER_ROOK":
+            self.image_bullet = WATER_BULLET
+            all_water_bullets.add(self)
+        elif self.bullet_type == "SAND_ROOK":
+            self.image_bullet = SAND_BULLET
+            all_sand_bullets.add(self)
+        elif self.bullet_type == "FIRE_ROOK":
+            self.image_bullet = FIRE_BULLET
+            all_fire_bullets.add(self)
+
+        self.speed = 2
         all_bullets.add(self)
-        self.rect = self.image.get_rect()
+        self.rect = self.image_bullet.get_rect()
         self.rect.x = coordinates[0] + 40
         self.rect.y = coordinates[1] + 40
 
     def update(self,game_window):
         game_window.blit(BACKGROUND,(self.rect.x,self.rect.y),self.rect)
-
+        timer = pygame.time.get_ticks()
+        timerBullets = timer/1000
         self.rect.x += self.speed
-
         if self.rect.x > 1200:
             self.kill()
         else:
-            game_window.blit(self.image,(self.rect.x,self.rect.y))
+            game_window.blit(self.image_bullet,(self.rect.x,self.rect.y))
+
+
+class AvatarObject(sprite.Sprite):
+    def __init__(self,x,y,object_type):
+        super().__init__()
+        self.x = x
+        self.y = y
+        self.object_type = object_type
+        if object_type == "ARROW":
+            self.image = ARROW
+
+        self.rect = self.image.get_rect()
+        self.speed = 1
+        all_arrows.add(self)
+
+    def update_object(self,game_window):
+        game_window.blit(BACKGROUND, (self.x, self.y), self.rect)
+        self.x -= self.speed
+        #if self.x < 200:
+            #self.kill()
+        #else:
+        game_window.blit(self.image, (self.x, self.y),self.rect)
+
 
 
 #create group for all avatars instances and bullets instances
 all_avatars_archers = sprite.Group()
 all_bullets = sprite.Group()
+all_water_bullets = sprite.Group()
+all_rock_bullets = sprite.Group()
+all_sand_bullets = sprite.Group()
+all_fire_bullets = sprite.Group()
+all_arrows = sprite.Group()
+
+
 #create an instance of counters
 counters = Counters(startingMoney,moneyRate,startingMoneyBooster,WIN_TIME,ENEMIES_PASSED,FIRE_RATE)
 
@@ -329,6 +451,7 @@ SANDrook = Rook("SAND_ROOK",7,SAND_ROOK)
 ROCKrook = Rook("ROCK_ROOK",8,ROCK_ROOK)
 
 rook_applicator = RookApplicator()
+rook_remover = RookRemover()
 
 #initialize and draw the background grid
 #create an empty list to hold the tile grid
@@ -368,7 +491,6 @@ GAME_WINDOW.blit(GAME_WINDOW,(0,0))
 game_running = True
 program_running = True
 
-
 while game_running:
 
     #check for events
@@ -378,13 +500,27 @@ while game_running:
             game_running = False
             program_running = False
         elif event.type == MOUSEBUTTONDOWN:
-            coordinates = mouse.get_pos()
-            x = coordinates[0]
-            y = coordinates[1]
-            tile_y = y // 100
-            tile_x = x // 100
-            print(tile_y,tile_x)
-            rook_applicator.select_tile(tile_grid[tile_y][tile_x],counters)
+            if event.button == 1:
+                coordinates = mouse.get_pos()
+                x = coordinates[0]
+                y = coordinates[1]
+                tile_y = y // 100
+                tile_x = x // 100
+                print(tile_y,tile_x)
+                rook_applicator.select_tile(tile_grid[tile_y][tile_x],counters)
+            elif event.button == 3:
+                coordinates = mouse.get_pos()
+                x = coordinates[0]
+                y = coordinates[1]
+                tile_y = y // 100
+                tile_x = x // 100
+                print(tile_y, tile_x)
+                print("SHOULD REMOVE THE ROOK")
+                print((x//100*100,y//100*100))
+                rook_remover.select_tile(tile_grid[tile_y][tile_x],counters)
+        elif event.type == MOUSEMOTION:
+            position = mouse.get_pos()
+            print(position)
 
     avatars = [AVATAR_KNIGHT, AVATAR_CANNIBAL, AVATAR_lUMBERJACK, AVATAR_ARCHER]
 
@@ -400,7 +536,6 @@ while game_running:
 
 
     #set up collision detection
-
     #Draw the background grid
     for tile_row in tile_grid:
         for tile in tile_row:
@@ -412,7 +547,6 @@ while game_running:
         tile_row = tile_grid[avatar_archer.rect.y//100]
         avatar_archer_left_side = avatar_archer.rect.x // 100
         avatar_archer_right_side = (avatar_archer.rect.x + avatar_archer.rect.width)//100
-
 
         if 0 <= avatar_archer_left_side <= 10:
             left_tile = tile_row[avatar_archer_left_side]
@@ -440,13 +574,24 @@ while game_running:
     for avatar in all_avatars_archers:
         avatar.update(GAME_WINDOW,counters)
 
-
     #update rooks that have been set
     for tile_row in tile_grid:
         for tile in tile_row:
             tile.draw_rook(GAME_WINDOW,rook_applicator)
 
-    for bullet in all_bullets:
+    #for bullet in all_bullets:
+        #bullet.update(GAME_WINDOW)
+
+    for bullet in all_fire_bullets:
+        bullet.update(GAME_WINDOW)
+
+    for bullet in all_rock_bullets:
+        bullet.update(GAME_WINDOW)
+
+    for bullet in all_sand_bullets:
+        bullet.update(GAME_WINDOW)
+
+    for bullet in all_water_bullets:
         bullet.update(GAME_WINDOW)
 
     counters.update(GAME_WINDOW)
@@ -456,7 +601,6 @@ while game_running:
 
 
 #End of mainloop
-pygame.quit()
 
 end_font = font.SysFont(None,50)
 if program_running:
@@ -474,7 +618,7 @@ while program_running:
     clock.tick(FRAME_RATE)
 
 
-
+pygame.quit()
 
 
 

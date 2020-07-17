@@ -130,9 +130,7 @@ class Avatar1(pygame.sprite.Sprite):
         self.Attack = False
         self.Idle = False
         self.Count = 0
-        self.life=5
-        
-        
+        self.life=5    
 
     def draw(self, win, time):
         if (time//1000)%15==0:
@@ -183,8 +181,6 @@ class Avatar2(pygame.sprite.Sprite):
         self.Count = 0
         self.life=5
         
-        
-
     def draw(self, win, time):
         if (time//1000)%15==0:
             avatar.x += avatar.vel
