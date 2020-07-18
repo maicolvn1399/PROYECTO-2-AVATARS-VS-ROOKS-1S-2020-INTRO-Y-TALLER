@@ -118,7 +118,7 @@ Avatar4Char =      [pygame.image.load('Troll_01_1_IDLE_000.png'), pygame.image.l
 clock = pygame.time.Clock()
 
 
-class Avatar1(pygame.sprite.Sprite):
+class Avatar1(pygame.sprite.Sprite,object):
     def __init__(self,x,y):
         super().__init__()
         self.x = x
@@ -134,22 +134,23 @@ class Avatar1(pygame.sprite.Sprite):
         
         
 
-    def draw(self, win, time):
+    def draw(self,win):
+        time = pygame.time.get_ticks()
         if (time//1000)%15==0:
-            avatar.x += avatar.vel
+            self.x += self.vel
         elif (time//1000)%5==0:
-           avatar.Attack = True
-           avatar.Idle = False
-           avatar.isDie= False
+           self.Attack = True
+           self.Idle = False
+           self.isDie= False
         elif self.life<=0:
-           avatar.Attack = False
-           avatar.Idle = False
-           avatar.isDie= True
+           self.Attack = False
+           self.Idle = False
+           self.isDie= True
     
         else:
     
-           avatar.Attack = False
-           avatar.isDie= False
+           self.Attack = False
+           self.isDie= False
         
         if self.Count + 1 >= 27:
               self.Count = 0
@@ -169,7 +170,7 @@ class Avatar1(pygame.sprite.Sprite):
             if pygame.sprite.collide_rect(self, sprite): 
                 return True
 #---------------------------------------------------------------------------
-class Avatar2(pygame.sprite.Sprite):
+class Avatar2(pygame.sprite.Sprite,object):
     def __init__(self,x,y):
         super().__init__()
         self.x = x
@@ -182,25 +183,27 @@ class Avatar2(pygame.sprite.Sprite):
         self.Idle = False
         self.Count = 0
         self.life=5
+        self.win=win
         
         
 
-    def draw(self, win, time):
+    def draw(self,win):
+        time = pygame.time.get_ticks()
         if (time//1000)%15==0:
-            avatar.x += avatar.vel
+            self.x += self.vel
         elif (time//1000)%5==0:
-           avatar.Attack = True
-           avatar.Idle = False
-           avatar.isDie= False
+           self.Attack = True
+           self.Idle = False
+           self.isDie= False
         elif self.life<=0:
-           avatar.Attack = False
-           avatar.Idle = False
-           avatar.isDie= True
+           self.Attack = False
+           self.Idle = False
+           self.isDie= True
     
         else:
     
-           avatar.Attack = False
-           avatar.isDie= False
+           self.Attack = False
+           self.isDie= False
         
         if self.Count + 1 >= 27:
               self.Count = 0
@@ -220,7 +223,7 @@ class Avatar2(pygame.sprite.Sprite):
             if pygame.sprite.collide_rect(self, sprite): 
                 return True
 #---------------------------------------------------------------------------
-class Avatar3(pygame.sprite.Sprite):
+class Avatar3(pygame.sprite.Sprite,object):
     def __init__(self,x,y):
         super().__init__()
         self.x = x
@@ -231,27 +234,29 @@ class Avatar3(pygame.sprite.Sprite):
 ##        self.isDie = False
         self.Attack = False
         self.Idle = False
+        self.isDie= False
         self.Count = 0
         self.life=5
         
         
 
-    def draw(self, win, time):
+    def draw(self,win):
+        time = pygame.time.get_ticks()
         if (time//1000)%15==0:
-            avatar.x += avatar.vel
+            self.x += self.vel
         elif (time//1000)%5==0:
-           avatar.Attack = True
-           avatar.Idle = False
-##           avatar.isDie= False
+           self.Attack = True
+           self.Idle = False
+           self.isDie= False
         elif self.life<=0:
-           avatar.Attack = False
-           avatar.Idle = False
-           avatar.isDie= True
+           self.Attack = False
+           self.Idle = False
+           self.isDie= True
     
         else:
     
-           avatar.Attack = False
-           avatar.isDie= False
+           self.Attack = False
+           self.isDie= False
         
         if self.Count + 1 >= 27:
               self.Count = 0
@@ -259,7 +264,9 @@ class Avatar3(pygame.sprite.Sprite):
         if self.Attack:
               win.blit(Avatar3attack[self.Count//3], (self.x,self.y))
               self.Count += 1
-    
+        elif self.isDie:
+              win.blit(Avatar3Die[self.Count//3], (self.x,self.y))
+              self.Count +=1
         else: 
               win.blit(Avatar3Char[self.Count//3], (self.x,self.y))
               self.Count +=1
@@ -269,7 +276,7 @@ class Avatar3(pygame.sprite.Sprite):
             if pygame.sprite.collide_rect(self, sprite): 
                 return True
 #---------------------------------------------------------------------------
-class Avatar4(pygame.sprite.Sprite):
+class Avatar4(pygame.sprite.Sprite,object):
     def __init__(self,x,y):
         super().__init__()
         self.x = x
@@ -285,22 +292,23 @@ class Avatar4(pygame.sprite.Sprite):
         
         
 
-    def draw(self, win, time):
+    def draw(self,win):
+        time = pygame.time.get_ticks()
         if (time//1000)%15==0:
-            avatar.x += avatar.vel
+            self.x += self.vel
         elif (time//1000)%5==0:
-           avatar.Attack = True
-           avatar.Idle = False
-           avatar.isDie= False
+           self.Attack = True
+           self.Idle = False
+           self.isDie= False
         elif self.life<=0:
-           avatar.Attack = False
-           avatar.Idle = False
-           avatar.isDie= True
+           self.Attack = False
+           self.Idle = False
+           self.isDie= True
     
         else:
     
-           avatar.Attack = False
-           avatar.isDie= False
+           self.Attack = False
+           self.isDie= False
         
         if self.Count + 1 >= 27:
               self.Count = 0
@@ -328,10 +336,11 @@ def randomAvatar():
            Avatar4(100, 100),Avatar4(100,200),Avatar4(100, 300),Avatar4(100, 400),Avatar4(100,500)]
     return (random.choice(lista))
 
-def redrawGameWindow(time):
+def redrawGameWindow(time,avatar):
     
     win.blit(bg,(0,0))
-    all_avatars.draw(win,time)
+    avatar1=randomAvatar()
+    avatar1.draw(win)
     
     pygame.display.update()
 #---------------------------------------------------------------------------
