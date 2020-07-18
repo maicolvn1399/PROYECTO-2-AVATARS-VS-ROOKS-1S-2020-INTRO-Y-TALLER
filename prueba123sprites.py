@@ -130,9 +130,7 @@ class Avatar1(pygame.sprite.Sprite,object):
         self.Attack = False
         self.Idle = False
         self.Count = 0
-        self.life=5
-        
-        
+        self.life=5    
 
     def draw(self,win):
         time = pygame.time.get_ticks()
@@ -185,10 +183,14 @@ class Avatar2(pygame.sprite.Sprite,object):
         self.life=5
         self.win=win
         
+<<<<<<< HEAD
         
 
     def draw(self,win):
         time = pygame.time.get_ticks()
+=======
+    def draw(self, win, time):
+>>>>>>> 0e4737ef1ce617ec299647e5b69f7a98f2de58be
         if (time//1000)%15==0:
             self.x += self.vel
         elif (time//1000)%5==0:
