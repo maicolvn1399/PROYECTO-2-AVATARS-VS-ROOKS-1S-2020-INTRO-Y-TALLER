@@ -1,68 +1,82 @@
 import turtle
-import os,random,time
-
-#Variables for display
-animationWindow = turtle.Screen()
-animationWindow.title("You Won!!!")
-animationWindow.bgcolor("green")
-animationWindow.bgpic("5.png")
-animationWindow.setup(width=800,height=600)
-animationWindow.tracer(0)
-animationWindow.register_shape("diamond1.gif")
-animationWindow.register_shape("diamond2.gif")
-animationWindow.register_shape("diamond3.gif")
-
-diamondShapes = ["diamond1.gif","diamond2.gif","diamond3.gif"]
-
-#Create a list of diamonds
-diamonds = []
-
-#Add the diamonds
-for i in range(50):
-    diamond = turtle.Turtle()
-    diamond.speed(0)
-    diamond.shape(random.choice(diamondShapes))
-    diamond.color("blue")
-    diamond.penup()
-    diamond.goto(0,250)
-    diamond.speed = random.randint(1,4)
-    diamonds.append(diamond)
+import time
+import random 
 
 
-#Pen to write on screen
-pen = turtle.Turtle()
-pen.hideturtle()
-pen.speed(0)
-pen.shape("square")
-pen.color("black")
-pen.penup()
-pen.goto(0,150)
-font = ("Fixedsys",80,"normal")
-pen.write("YOU WON!!!",font=font,align="center")
+def WinningAnimation():
+     WindowAnimation = turtle.Screen()
+     WindowAnimation.bgcolor("black")
+     WindowAnimation.bgpic("5.png")
+     WindowAnimation.title("You Won Animation")
+     WindowAnimation.tracer(0)
 
-#Mainloop for the animation
-while True:
-    animationWindow.update()
-    #Move the diamond
-    for diamond in diamonds:
-        y = diamond.ycor()
-        y -= diamond.speed
-        diamond.sety(y)
-        #Check if off the screen
-        if y < -300:
-            x = random.randint(-380,380)
-            y = random.randint(300,400)
-            diamond.goto(x,y)
+     #Create the avatars and store them in a list
+     avatars = []
+
+     
+
+     for i in range(15):
+          avatars.append(turtle.Turtle())
 
 
+     WindowAnimation.register_shape("avatarKnight.gif")
+     WindowAnimation.register_shape("avatarCannibal.gif")
+     WindowAnimation.register_shape("avatarLumberjack.gif")
+     WindowAnimation.register_shape("avatarArcher.gif")
+     
+     imgs = ["avatarLumberjack.gif","avatarCannibal.gif","avatarKnight.gif","avatarArcher.gif"]
+     pen = turtle.Turtle()
+     pen.hideturtle()
+     pen.speed(0)
+     pen.shape("square")
+     pen.color("black")
+     pen.penup()
+     pen.goto(0,150)
+     font = ("Fixedsys",80,"normal")
+     pen.write("YOU WON! :)",font=font,align="center")
+
+                
+     for avatar in avatars:
+          avatar.shape(random.choice(imgs))
+          avatar.penup()
+          avatar.speed(0)#speed of the movement
+          X = random.randint(-290,290)
+          Y = random.randint(200,400)
+          avatar.goto(X,Y)#place where it starts
+          avatar.dy = 0
+          avatar.dx = random.randint(-3,3) #to move from left to right 
+          avatar.da = random.randint(-5,5)
+          gravedad = 0.1
+
+     while True:
+          time.sleep(0.01)
+               
+          WindowAnimation.update()
+
+          for avatar in avatars:
+               avatar.rt(avatar.da)
+               avatar.dy -= gravedad 
+               avatar.sety(avatar.ycor() + avatar.dy)
+
+               avatar.setx(avatar.xcor() + avatar.dx)
+               #check for borderlines
+               if avatar.xcor() > 330: 
+                    avatar.dx *= -1
+               if avatar.xcor() < -330:
+                    avatar.dx *= -1
+               #bounces
+               if avatar.ycor() < -330:
+                    avatar.dy *= -1 
+
+               
+
+
+     WindowAnimation.mainloop()
+
+
+WinningAnimation()
 
 
 
-
-
-
-
-
-
-
-animationWindow.mainloop()
+     
+     

@@ -1,13 +1,32 @@
 import pygame
 from pygame import *
 from random import *
+import math
+from pygame.locals import*
+import turtle
+import time
+import sys
+import os
+
+"""
+Instituto Tecnológico de Costa Rica
+Área de Ingeniería en Computadores
+CE1102 - Taller de Programación
+Profesor: Jason Leitón Jiménez
+Estudiantes: Raquel Lizano y Michael Valverde
+II Proyecto - I Semestre - 2020
+"""
+
+
+
+
 
 #Initialize pygame
 pygame.init()
 font.init()
 
 #set up a clock
-clock = time.Clock()
+clock = pygame.time.Clock()
 
 #CONSTANT VARIABLES
 WINDOW_WIDTH = 1100
@@ -22,7 +41,7 @@ HEIGHT = 100
 WHITE = (255,255,255)
 
 #set up rates
-SPAWN_RATE = 10000
+SPAWN_RATE = 1000
 FRAME_RATE = 60
 
 #Set up counters
@@ -43,6 +62,10 @@ sand_rook_coordinates = []
 fire_rook_coordinates = []
 water_rook_coordinates = []
 
+all_rooks_created = []
+new_rooks = []
+playTilesList = []
+
 FIRE_RATE = 600
 
 #____________load assets__________________
@@ -52,7 +75,7 @@ GAME_WINDOW = display.set_mode(WINDOW_RES)
 display.set_caption("AVATARS VS ROOKS")
 
 #Background
-background_img = image.load("backgroundLevel1.png")
+background_img = image.load("backgroundlevel3.png")
 background_surf = Surface.convert_alpha(background_img)
 BACKGROUND = transform.scale(background_surf,WINDOW_RES)
 GAME_WINDOW.blit(BACKGROUND,(0,0))
@@ -120,6 +143,8 @@ ARROW = transform.scale(arrow_bullet_surf,(75,15))
 explosion_img = image.load("explosion.png")
 EXPLOSION = explosion_img
 
+
+
 #set up classes
 class Avatar(sprite.Sprite):
     def __init__(self,image,attackPower,health,walkSeconds):
@@ -165,20 +190,24 @@ class Avatar(sprite.Sprite):
         if isCollidingWithFireBullet is not None:
             for bullet in isCollidingWithFireBullet:
                 self.health -= 8
+                PlayHitSound(2)
 
         isCollidingWithWaterBullet = sprite.spritecollide(self,all_water_bullets,True)
         if isCollidingWithWaterBullet is not None:
             for bullet in isCollidingWithWaterBullet:
+                PlayHitSound(3)
                 self.health -= 8
 
         isCollidingWithRockBullet = sprite.spritecollide(self,all_rock_bullets,True)
         if isCollidingWithRockBullet is not None:
             for bullet in isCollidingWithRockBullet:
+                PlayHitSound(4)
                 self.health -= 4
 
         isCollidingWithSandBullet = sprite.spritecollide(self,all_sand_bullets,True)
         if isCollidingWithSandBullet is not None:
             for bullet in isCollidingWithSandBullet:
+                PlayHitSound(5)
                 self.health -= 2
 
         if self.rect.x <= 100:
@@ -207,9 +236,9 @@ class Avatar(sprite.Sprite):
 
 
 class Counters(object):
-    def __init__(self,enemy_money, money_rate,money_booster,timer,enemies_passed,fire_rate):
+    def __init__(self,enemy_money,money_rate,money_booster,timer,enemies_passed,fire_rate):
         self.loop_count = 0
-        self.display_font = font.SysFont(None,25)
+        self.display_font = font.Font("font.ttf",25)
         self.enemy_money = enemy_money
         self.money_rate = money_rate
         self.money_booster = money_booster
@@ -225,7 +254,7 @@ class Counters(object):
             self.enemy_money += self.money_booster
 
     def draw_money(self,game_window):
-        if bool(self.money_rect):
+        if self.money_rect:
             game_window.blit(BACKGROUND,(self.money_rect.x,self.money_rect.y),self.money_rect)
         money_surface = self.display_font.render(str(self.enemy_money),True,WHITE)
         self.money_rect = money_surface.get_rect()
@@ -235,25 +264,26 @@ class Counters(object):
 
     def draw_enemies_passed(self,game_window):
         if bool(self.enemies_passed_rect):
-            game_window.blit(BACKGROUND,
-                             (self.enemies_passed_rect.x,self.enemies_passed_rect.y),self.enemies_passed_rect)
+            game_window.blit(BACKGROUND,(self.enemies_passed_rect.x,self.enemies_passed_rect.y),self.enemies_passed_rect)
 
-            enemies_passed_surf = self.display_font.render(str(self.enemies_passed),True,WHITE)
-            self.enemies_passed_rect = enemies_passed_surf.get_rect()
+        enemies_passed_surf = self.display_font.render(str(self.enemies_passed),True,WHITE)
+        self.enemies_passed_rect = enemies_passed_surf.get_rect()
 
-            self.enemies_passed_rect.x = WINDOW_WIDTH - 150
-            self.enemies_passed_rect.y = WINDOW_HEIGHT - 50
-            game_window.blit(enemies_passed_surf,self.enemies_passed_rect)
+        self.enemies_passed_rect.x = WINDOW_WIDTH - 150
+        self.enemies_passed_rect.y = WINDOW_HEIGHT - 50
+        game_window.blit(enemies_passed_surf,self.enemies_passed_rect)
 
     def draw_timer(self,game_window):
         if bool(self.timer_rect):
             game_window.blit(BACKGROUND,
                              (self.timer_rect.x, self.timer_rect.y),self.timer_rect)
-            timer_surf = self.display_font.render(str(WIN_TIME - self.loop_count // FRAME_RATE),True,WHITE)
-            self.timer_rect = timer_surf.get_rect()
-            self.timer_rect.x = WINDOW_WIDTH - 250
-            self.timer_rect.y = WINDOW_HEIGHT - 50
-            game_window.blit(timer_surf,self.timer_rect)
+        #timerGame = int(time.get_ticks()/1000)
+        timer_surf = self.display_font.render(str(WIN_TIME - self.loop_count // FRAME_RATE),True,WHITE)
+        #timer_surf = self.display_font.render(str(timerGame),True,WHITE)
+        self.timer_rect = timer_surf.get_rect()
+        self.timer_rect.x = WINDOW_WIDTH - 250
+        self.timer_rect.y = WINDOW_HEIGHT - 50
+        game_window.blit(timer_surf,self.timer_rect)
 
     def update(self,game_window):
         self.loop_count += 1
@@ -266,6 +296,7 @@ class Counters(object):
         self.update_water_rook()
         self.update_sand_rook()
         self.update_avatar_objects()
+        #self.update_rook_damage()
 
     def update_rock_rook(self):
         for location in rock_rook_coordinates:
@@ -292,17 +323,29 @@ class Counters(object):
             if self.loop_count % self.fire_rate == 0:
                 AvatarObject(i.getX(),i.getY(),"ARROW")
 
+    def update_rook_damage(self):
+        for pos in sand_rook_coordinates:
+            sand_rookX,sand_rookY = pos
+            if isColliding(sand_rookX,sand_rookY):
+                print("IS COLLIDING")
 
 class Rook(sprite.Sprite):
     def __init__(self,type,cost,type_img):
         self.type = type
+        if type == "WATER_ROOK":
+            self.health = 16
+        elif type == "FIRE_ROOK":
+            self.health = 16
+        elif type == "ROCK_ROOK":
+            self.health = 14
+        else:
+            self.health = 2
+
         self.cost = cost
         self.type_img = type_img
         self.rect = self.type_img.get_rect()
         self.bullet_speed = 1
         self.bullet_stop = False
-
-    def update(self):
 
 class RookApplicator(object):
     def __init__(self):
@@ -322,27 +365,36 @@ class RookRemover(object):
     def select_tile(self,tile,counters):
         self.selected = tile.unset_rook(self.selected,counters)
 
-
 class BackgroundTile(sprite.Sprite):
     def __init__(self,rect):
         super().__init__()
         self.rook = None
         self.rect = rect
+        self.health = 0
 
 class PlayTile(BackgroundTile):
     def set_rook(self,rook,counters):
         if bool(rook) and not bool(self.rook):
             counters.enemy_money -= rook.cost
             self.rook = rook
+            playTilesList.append(self)
             if rook == SANDrook:
+                self.health = 14
                 counters.money_booster += 1
                 sand_rook_coordinates.append((self.rect.x,self.rect.y))
+                all_rooks_created.append((self.rect.x,self.rect.y))
             if rook == ROCKrook:
+                self.health = 14
                 rock_rook_coordinates.append((self.rect.x,self.rect.y))
+                all_rooks_created.append((self.rect.x, self.rect.y))
             if rook == WATERrook:
+                self.health = 16
                 water_rook_coordinates.append((self.rect.x,self.rect.y))
+                all_rooks_created.append((self.rect.x, self.rect.y))
             if rook == FIRErook:
+                self.health = 16
                 fire_rook_coordinates.append((self.rect.x,self.rect.y))
+                all_rooks_created.append((self.rect.x, self.rect.y))
         return None
 
     def draw_rook(self,game_window,rook_applicator):
@@ -353,6 +405,13 @@ class PlayTile(BackgroundTile):
             if rook == ROCKrook:
                 rook.kill()
 
+    def attack_rook(self):
+        for i in all_arrows:
+            if isColliding(self.rect.x,self.rect.y,i.getX(),i.getY()):
+                print("ROOK HEALTH DECREASES -2")
+                self.rook.health -= 2
+            else:
+                print("NO COLLISION DETECTED")
 
 class ButtonTile(BackgroundTile):
     def set_rook(self,rook,counters):
@@ -429,13 +488,29 @@ class AvatarObject(sprite.Sprite):
         self.speed = 1
         all_arrows.add(self)
 
+    def getX(self):
+        return self.rect.x
+
+    def getY(self):
+        return self.rect.y
+
     def update_object(self,game_window):
         game_window.blit(BACKGROUND, (self.rect.x, self.rect.y),self.rect)
         self.rect.x -= self.speed
         if self.rect.x < 100:
+            print("COORDINATES FOR ARROW"+str(self.rect.x)+" - "+ str(self.rect.y))
             self.kill()
         else:
             game_window.blit(self.image,(self.rect.x, self.rect.y))
+
+    def attack(self):
+        for COORDS in all_rooks_created:
+            x,y = COORDS
+            if isColliding(x,y,self.rect.x,self.rect.y):
+                print("ARROW COLLIDES WITH ROOK****")
+            else:
+                print("NOT COLLIDING")
+
 
 def PlayMainMusic():
     """Plays game music"""
@@ -447,10 +522,10 @@ def PlayExplosionSound():
     pygame.mixer.init()
     pygame.mixer.Channel(1).play(pygame.mixer.Sound("explosion.wav"))
 
-def PlayHitSound():
+def PlayHitSound(channel):
     """Plays sound effect"""
     pygame.mixer.init()
-    pygame.mixer.Channel(2).play(pygame.mixer.Sound("hit.wav"))
+    pygame.mixer.Channel(channel).play(pygame.mixer.Sound("golpe (1).wav"))
 
 def ReadFile():
     """This function reads the file of the scores
@@ -478,6 +553,17 @@ def SaveScore(playerName,score,time):
     #WriteInFile(data)
 
 
+def isColliding(rookX, rookY,objectX,objectY):
+    """Determines the distance between two objects, gets the coordinates in x and y
+    of the main car and the enemy"""
+    """Code based on 
+    https://www.mathplanet.com/education/algebra-2/conic-sections/distance-between-two-points-and-the-midpoint"""
+    distance = math.sqrt((math.pow(rookX - objectX, 2)) + (math.pow(rookY - objectY, 2)))
+    if distance < 150:
+        return True
+    else:
+        return False
+
 
 #create group for all avatars instances and bullets instances
 all_avatars_archers = sprite.Group()
@@ -487,6 +573,9 @@ all_rock_bullets = sprite.Group()
 all_sand_bullets = sprite.Group()
 all_fire_bullets = sprite.Group()
 all_arrows = sprite.Group()
+all_rooks_sprite = sprite.Group()
+
+
 
 
 #create an instance of counters
@@ -542,6 +631,9 @@ def MainloopLevel1():
 
     while game_running:
 
+        #print(all_rooks_sprite)
+        #print(len(all_rooks_created))
+        print(len(playTilesList))
         #check for events
         for event in pygame.event.get():
             #Exit the game
@@ -555,7 +647,8 @@ def MainloopLevel1():
                     y = coordinates[1]
                     tile_y = y // 100
                     tile_x = x // 100
-                    print(tile_y,tile_x)
+                    #print(tile_y,tile_x)
+                    print(x,y)
                     rook_applicator.select_tile(tile_grid[tile_y][tile_x],counters)
                 elif event.button == 3:
                     coordinates = mouse.get_pos()
@@ -569,9 +662,8 @@ def MainloopLevel1():
                     rook_remover.select_tile(tile_grid[tile_y][tile_x],counters)
             elif event.type == MOUSEMOTION:
                 position = mouse.get_pos()
-                print(position)
+                #print(position)
 
-        avatars = [AVATAR_KNIGHT, AVATAR_CANNIBAL, AVATAR_lUMBERJACK, AVATAR_ARCHER]
 
         #spawn sprites
         if randint(1,SPAWN_RATE) == 1:
@@ -582,7 +674,6 @@ def MainloopLevel1():
             Avatar(AVATAR_CANNIBAL,12,25,14)
         elif randint(1,SPAWN_RATE) == 15:
             Avatar(AVATAR_lUMBERJACK,9,20,13)
-
 
         #set up collision detection
         #Draw the background grid
@@ -646,6 +737,13 @@ def MainloopLevel1():
         for object in all_arrows:
             object.update_object(GAME_WINDOW)
 
+        #for object in all_arrows:
+            #object.attack()
+
+        for object in playTilesList:
+            object.attack_rook()
+            object.kill()
+
         counters.update(GAME_WINDOW)
 
         display.update()
@@ -669,7 +767,131 @@ def MainloopLevel1():
         clock.tick(FRAME_RATE)
 
 
+#_____ANIMATIONS______________________
+#ANIMATION FOR WHEN THE PLAYER WINS
+def WinningAnimation():
+    WindowAnimation = turtle.Screen()
+    WindowAnimation.bgcolor("black")
+    WindowAnimation.bgpic("5.png")
+    WindowAnimation.title("You Won Animation")
+    WindowAnimation.tracer(0)
+
+    # Create the avatars and store them in a list
+    avatars = []
+
+    for i in range(15):
+        avatars.append(turtle.Turtle())
+
+    WindowAnimation.register_shape("avatarKnight.gif")
+    WindowAnimation.register_shape("avatarCannibal.gif")
+    WindowAnimation.register_shape("avatarLumberjack.gif")
+    WindowAnimation.register_shape("avatarArcher.gif")
+
+    imgs = ["avatarLumberjack.gif", "avatarCannibal.gif", "avatarKnight.gif", "avatarArcher.gif"]
+    pen = turtle.Turtle()
+    pen.hideturtle()
+    pen.speed(0)
+    pen.shape("square")
+    pen.color("black")
+    pen.penup()
+    pen.goto(0, 150)
+    font = ("Fixedsys", 80, "normal")
+    pen.write("YOU WON! :)", font=font, align="center")
+
+    for avatar in avatars:
+        avatar.shape(choice(imgs))
+        avatar.penup()
+        avatar.speed(0)  # speed of the movement
+        X = randint(-290, 290)
+        Y = randint(200, 400)
+        avatar.goto(X, Y)  # place where it starts
+        avatar.dy = 0
+        avatar.dx = randint(-3, 3)  # to move from left to right
+        avatar.da = randint(-5, 5)
+        gravity = 0.1
+
+    while True:
+        time.sleep(0.01)
+
+        WindowAnimation.update()
+
+        for avatar in avatars:
+            avatar.rt(avatar.da)
+            avatar.dy -= gravity
+            avatar.sety(avatar.ycor() + avatar.dy)
+
+            avatar.setx(avatar.xcor() + avatar.dx)
+            # check for borderlines
+            if avatar.xcor() > 330:
+                avatar.dx *= -1
+            if avatar.xcor() < -330:
+                avatar.dx *= -1
+            # bounces
+            if avatar.ycor() < -330:
+                avatar.dy *= -1
+
+    WindowAnimation.mainloop()
+
+#ANIMATION FOR WHEN THE PLAYER HAS LOST THE GAME
+def GameOverAnimation():
+    #Variables for display
+    animationWindow = turtle.Screen()
+    animationWindow.title("You Lost Animation")
+    animationWindow.bgcolor("green")
+    animationWindow.bgpic("5.png")
+    animationWindow.setup(width=800,height=600)
+    animationWindow.tracer(0)
+    animationWindow.register_shape("diamond1.gif")
+    animationWindow.register_shape("diamond2.gif")
+    animationWindow.register_shape("diamond3.gif")
+
+    diamondShapes = ["diamond1.gif","diamond2.gif","diamond3.gif"]
+
+    #Create a list of diamonds
+    diamonds = []
+
+    #Add the diamonds
+    for i in range(50):
+        diamond = turtle.Turtle()
+        diamond.speed(0)
+        diamond.shape(choice(diamondShapes))
+        diamond.color("blue")
+        diamond.penup()
+        diamond.goto(0,250)
+        diamond.speed = randint(1,4)
+        diamonds.append(diamond)
+
+
+    #Pen to write on screen
+    pen = turtle.Turtle()
+    pen.hideturtle()
+    pen.speed(0)
+    pen.shape("square")
+    pen.color("black")
+    pen.penup()
+    pen.goto(0,150)
+    font = ("Fixedsys",80,"normal")
+    pen.write("YOU LOST! :(",font=font,align="center")
+
+    #Mainloop for the animation
+    while True:
+        animationWindow.update()
+        #Move the diamond
+        for diamond in diamonds:
+            y = diamond.ycor()
+            y -= diamond.speed
+            diamond.sety(y)
+            #Check if off the screen
+            if y < -300:
+                x = randint(-380,380)
+                y = randint(300,400)
+                diamond.goto(x,y)
+
+    animationWindow.mainloop()
+
 MainloopLevel1()
+#WinningAnimation()
+#GameOverAnimation()
 
 pygame.quit()
 
