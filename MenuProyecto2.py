@@ -1287,7 +1287,7 @@ def Gameloop():
     PlayMainMusic()
 
     while game_running:
-
+        win.blit(BACKGROUND,(0,0))
         # print(all_rooks_sprite)
         # print(len(all_rooks_created))
         print(len(playTilesList))
@@ -1457,7 +1457,7 @@ def Gameloop1(name,speed):
                if event.type==pygame.QUIT:
                     pygame.quit()
                     exit1=True
-               win.blit(fondo1,(0,0))
+               #win.blit(fondo1,(0,0))
                message("Nivel 2",COLOR3,-200,size="big")
                buttons("Pausa",win,buttoncolor5,button5,(100,34),ID="pause")
         
