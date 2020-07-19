@@ -1,3 +1,4 @@
+
 """
 Instituto Tecnológico de Costa Rica
 Área de Ingeniería en Computadores
@@ -1319,25 +1320,7 @@ def Gameloop(name,speed):
      mouseClicked = False
 #----------------------------------------
      exit1=False
-     global avatar_knight_list,avatar_lumberjack_list,avatar_archer_list,avatar_cannibal_list
-     aK = AvatarKnight(300,200)
-     bK = AvatarKnight(350,250)
-     avatar_knight_list = [aK,bK]
-     avatar_archer_list = []
-     avatar_lumberjack_list = []
-     avatar_cannibal_list = []
-
-     global sand_rook_list,rock_rook_list,water_rook_list,fire_rook_list
-     sand_rook_list = []
-     rock_rook_list = []
-     water_rook_list = []
-     fire_rook_list = []
-
-     global rocks_bullet_list,sand_bullet_list,water_bullet_list,fire_bullet_list
-     rocks_bullet_list = []
-     sand_bullet_list = []
-     water_bullet_list = []
-     fire_bullet_list = []
+     
 
      #init_avatar_knight()
      print(avatar_knight_list)
@@ -1356,51 +1339,11 @@ def Gameloop(name,speed):
                if event.type==pygame.QUIT:
                     pygame.quit()
                     exit1=True
-               elif event.type == pygame.MOUSEBUTTONDOWN:
-                   x = event.pos[0] // 90
-                   y = event.pos[1] // 90
-                   map = map_list[y-1][x]
-                   print(map.position)
-
-                   if event.button == 1:
-                       if map.rook_can_be_placed:
-                           rook = SandRook(map.position[0],map.position[1],5)
-                           sand_rook_list.append(rook)
-                           bullet = SandBullet(rook)
-                           sand_bullet_list.append()
-                           map.rook_can_be_placed = False
-                   elif event.button == 3:
-                       if map.rook_can_be_placed:
-                           waterRook = WaterRook(map.position[0],map.position[1],5)
-                           water_rook_list.append(waterRook)
-                           waterBullet = WaterBullet(waterRook)
-                           water_bullet_list.append(waterBullet)
-                           map.rook_can_be_placed = False
-
-         #ventana.fill(BGCOLOR)
-         #ventana.blit(BG, (0, 0))
-
-
-
-
-               #if mouseClicked and mousex>0 and mousex<80 and mousey>600 and mousey<700:
-                   #print("NEW FIRE ROOK CREATED ")
-               #if mouseClicked and mousex>80 and mousex<178 and mousey>600 and mousey<695:
-                   #print("NEW ROCK ROOK CREATED")
-               #if mouseClicked and mousex>172 and mousex<277 and mousey>600 and mousey<693:
-                   #print("NEW WATER ROOK CREATED")
-               #if mouseClicked and mousex>275 and mousex<385 and mousey>600 and mousey<695:
-                   #print("NEW SAND ROOK CREATED")
-
-               #ventana.blit(backgroundLevel1,(0,0))
-         message("Nivel 1",COLOR3,-200,size="big")
+         win.blit(backgroundLevel1,(0,0))
+         message("Nivel 1",COLOR3,0,-100,size="big")
          buttons("Pausa",win,buttoncolor5,button5,buttonsize1,ID="pause")
          pygame.display.update()
          clock.tick(60)
-##-------condicion de game over--------------------
-##          if vida<=0:
-##                GameOver(nombre,puntos)
-        
          pygame.display.update()
          clock.tick(60)
            
@@ -1427,7 +1370,7 @@ def Gameloop1(name,speed):
                     exit1=True
                win.blit(fondo1,(0,0))
                message("Nivel 2",COLOR3,-200,size="big")
-               buttons("Pausa",win,buttoncolor5,button5,buttonsize1,ID="pausa")
+               buttons("Pausa",win,buttoncolor5,button5,(100,34),ID="pause")
         
           pygame.display.update()
           clock.tick(60)
