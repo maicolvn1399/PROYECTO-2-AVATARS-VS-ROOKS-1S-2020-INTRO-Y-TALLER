@@ -1175,12 +1175,27 @@ def instructions():
                
                buttons("Volver",win,buttoncolor2,button5,buttonsize1,ID="exit1") 
                message("Instrucciones",COLOR2,0,-200,size="big")
-               message(" ",BLACK,-75,size="regular")
-               message(" ",BLACK,-40,size="regular")
-               message("",BLACK,-5,size="regular")
-               message("",BLACK,+30,size="regular")
+               message("Avatars vs Rookses un juego de estrategia y defensa",BLACK,0,-70,size="small")
+               message("El campo de juego se divide en 5 carriles horizontales",BLACK,0,-40,size="small")
+               message("existen 4 tipos de rooks",BLACK,0,-10,size="small")
+               message("Usa el mouse para arrastrar y soltar los rooks",BLACK,0,20,size="small")
+               message(" existen 4 tipos de avatars",BLACK,0,50,size="small")
+               message("Los Rooks solo pueden defenderse contra",BLACK,0,80,size="small")
+               message("los avatars en el carril en el que están",BLACK,0,110,size="small")
+               message("Cada rook tiene un costo de construccion",BLACK,0,140,size="small")
+              
                pygame.display.update()
                clock.tick(15)
+"""
+Plants vs Zombies ( https://en.wikipedia.org/wiki/Plants_vs._Zombies ) es un juego de
+estrategia y defensa de la torre que involucra a un ejército de zombies que intentan entrar en la casa (césped) y comerse el cerebro.
+La única forma en que puedes detenerlos es usando tu arsenal de plantas que matarán a los zombis a tus órdenes.
+Las plantas (pea-shooters, remolachas, nueces y girasoles) están listas para destruir a los zombies que se atreven a entrar en su patio trasero.
+
+El campo de juego se divide en 5 carriles horizontales, los solo se moverá hacia la casa del jugador a lo largo de un carril.
+La siembra cuesta "sol" (el sol actúa como la moneda del juego, necesaria para comprar plantas), que se puede recolectar
+gratis (aunque lentamente) y también plantando la planta de girasol que genera un sol a intervalos regulares.
+Los Rooks solo pueden defenderse contra los avatars en el carril en el que están."""
 #----opciones-------------------------------------
 def option():
     lock = pygame.time.Clock()
