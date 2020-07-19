@@ -1,8 +1,11 @@
 import pygame
 from pygame import *
 from random import *
+from tkinter import *
+from tkinter import messagebox
 import math
 from pygame.locals import*
+from operator import itemgetter
 import turtle
 import time
 import sys
@@ -17,13 +20,14 @@ Estudiantes: Raquel Lizano y Michael Valverde
 II Proyecto - I Semestre - 2020
 """
 
-
-
-
-
 #Initialize pygame
 pygame.init()
 font.init()
+
+display_width = 800
+display_height = 600
+gameDisplay = pygame.display.set_mode((display_width, display_height)) #The display in which the game runs
+pygame.display.set_caption("Road Fighter")
 
 #set up a clock
 clock = pygame.time.Clock()
@@ -116,7 +120,6 @@ rock_rook = image.load("rockRook.png")
 rock_rook_surf = Surface.convert_alpha(rock_rook)
 ROCK_ROOK = transform.scale(rock_rook_surf,(WIDTH,HEIGHT))
 
-
 #set up bullets
 sand_bullet_img = image.load("sandEffect.png")
 sand_bullet_surf = Surface.convert_alpha(sand_bullet_img)
@@ -144,6 +147,132 @@ explosion_img = image.load("explosion.png")
 EXPLOSION = explosion_img
 
 
+def WelcomeWindow():
+    """This is the first window the player sees on screen, it allows the player to type in their name and select a level,
+    or see the scores from previous games as well as the instructions and credits  """
+    welcomeWindow = Tk()
+    COLOR1 = "#FF8903"
+    COLOR2 = "#76E400"
+    COLOR3 = "#F2A400"
+    COLOR4 = "#A9EC0C"
+    COLOR5 = "#FDC61C"
+    welcomeWindow.title("Avatars Vs Rooks")
+    welcomeWindow.minsize(450, 500)
+    welcomeWindow.resizable(width=NO, height=NO)
+    backgroundImage = LoadImage("background.gif")
+    labelBackground = Label(welcomeWindow, image=backgroundImage)
+    labelBackground.place(x=0, y=0)
+    welcomeLabel = Label(welcomeWindow, text="Avatars Vs Rooks", font="Fixedsys 18", bg=COLOR1, fg="black")
+    welcomeLabel.place(x=50, y=100)
+    nameLabel = Label(welcomeWindow, text="Enter your name", font="Fixedsys 16", bg=COLOR2, fg="black")
+    nameLabel.place(x=50, y=180)
+
+    nameEntry = Entry(welcomeWindow, width=25, bg=COLOR2, fg="black")
+    nameEntry.place(x=250, y=180)
+
+    levelLabel = Label(welcomeWindow, text="Select a level", font="Fixedsys 16", bg=COLOR3, fg="black")
+    levelLabel.place(x=50, y=230)
+
+    buttonLevel1 = Button(welcomeWindow,font = "Fixedsys 16", text="Level 1",bg=COLOR3,fg="black")
+    buttonLevel1.place(x=250,y=230)
+
+    buttonLevel2 = Button(welcomeWindow,font = "Fixedsys 16", text="Level 2",bg=COLOR4,fg="black")
+    buttonLevel2.place(x=250,y=260)
+
+    buttonLevel3 = Button(welcomeWindow,font = "Fixedsys 16", text="Level 3",bg=COLOR5,fg="black")
+    buttonLevel3.place(x=250,y=290)
+
+    instructionsButton = Button(welcomeWindow, font="Fixedsys 16", text="Instructions", bg=COLOR3, fg="black",
+                                command=Instructions)
+    instructionsButton.place(x=250, y=330)
+
+    previousScoresButton = Button(welcomeWindow, font="Fixedsys 16", text="Best Scores", bg=COLOR4, fg="black",
+                                  command=lambda: TopScoresWindow())
+    previousScoresButton.place(x=250, y=360)
+
+    creditsButton = Button(welcomeWindow, font="Fixedsys 16", text="Credits", bg=COLOR5, fg="black", command=Credits)
+    creditsButton.place(x=250, y=390)
+
+    welcomeWindow.mainloop()
+
+def TopScoresWindow():
+    """"GUI to show the top best scores of the game"""
+    ScoresWindow = Toplevel()
+    ScoresWindow.minsize(400, 400)
+    ScoresWindow.resizable(width=NO, height=NO)
+    ScoresWindow.title("Top Best Scores")
+    #scores = GetScores()
+
+    backgroundImageScore = LoadImage("bgScores.gif")
+    labelBGScores = Label(ScoresWindow, image=backgroundImageScore)
+    labelBGScores.image = backgroundImageScore
+    labelBGScores.place(x=0, y=0, relwidth=1, relheight=1)
+
+    labelScores = Label(ScoresWindow,text="Top 7 Best Scores",font = "Fixedsys 17",bg="#f59042")
+    labelScores.place(x=65,y=30)
+    messageScores = Message(ScoresWindow,
+                      text=str("scores"),
+                      bg="#f59042", justify="left", relief="ridge", font="Fixedsys 16")
+    messageScores.place(x=100, y=150)
+    ScoresWindow.mainloop()
+
+
+def Instructions():
+    """GUI  to show the instructions of the game to the players"""
+    instructionsWindow = Toplevel()
+    instructionsWindow.minsize(450, 500)
+    instructionsWindow.resizable(width=NO, height=NO)
+    instructionsWindow.title("Instructions")
+
+    backgroundImage = LoadImage("background.gif")
+    labelBackground = Label(instructionsWindow, image=backgroundImage)
+    labelBackground.place(x=0, y=0, relwidth=1, relheight=1)
+    labelBackground.image = backgroundImage
+    message = Message(instructionsWindow, text="The objective of the game is to kill the avatars appearing in the "
+                                               "right side of the screen, to do so, you have to select one rook"
+                                               " from the bottom of the screen, there are four types of rooks:"
+                                               "\nWater rook: shoots water to the enemies "
+                                               "\nRock rook: shoots rocks to the enemies "
+                                               "\nSand rook: throws sand to the opponents "
+                                               "\nFire rook: throws fire balls to the opponents, then you have to and place it to the game board "
+                                               "once the rook is set, it will begin to shoot the enemies, be careful because "
+                                               "the avatars will fight back.\n\n Good luck!", bg="#f59042", justify="left", relief="ridge", font="Fixedsys 13")
+    message.place(x=50, y=50)
+    instructionsWindow.mainloop()
+
+def Credits():
+    """GUI for the credits of the game"""
+    creditsWindow = Toplevel()
+    creditsWindow.minsize(600, 500)
+    creditsWindow.resizable(width=NO, height=NO)
+    creditsWindow.title("Credits")
+    backgroundImage = LoadImage("background.gif")
+    labelBackground = Label(creditsWindow, image=backgroundImage)
+    labelBackground.place(x=0, y=0, relwidth=1, relheight=1)
+    labelBackground.image = backgroundImage
+
+    message = Message(creditsWindow, text="Desarrollado en Costa Rica\n"
+                                          "Tecnologico de Costa Rica, Ingenieria en Computadores\n"
+                                          "", bg="#f59042", justify="left", relief="ridge", font="Fixedsys 16")
+
+    message.place(x=100, y=100)
+
+    creditsWindow.mainloop()
+
+
+#def ValidateInputs(name, currentLevel):
+    """Function that validates the inputs before running the game, the name should be an string and the level should be a integer,
+otherwise it won't run and will ask the user to type or click valid values"""
+    #if isinstance(name, str) and not name.isspace() and not len(name) == 0:
+        #return GameWindow(name, currentLevel)
+    #else:
+        #return messagebox.showerror("Error", "You have to enter a valid player name")
+
+def LoadImage(ImgName):
+    """Loads and image"""
+    path = os.path.join('media', ImgName)
+    imageToLoad = PhotoImage(file=path)
+    return imageToLoad
 
 #set up classes
 class Avatar(sprite.Sprite):
@@ -511,7 +640,6 @@ class AvatarObject(sprite.Sprite):
             else:
                 print("NOT COLLIDING")
 
-
 def PlayMainMusic():
     """Plays game music"""
     pygame.mixer.init()
@@ -525,7 +653,7 @@ def PlayExplosionSound():
 def PlayHitSound(channel):
     """Plays sound effect"""
     pygame.mixer.init()
-    pygame.mixer.Channel(channel).play(pygame.mixer.Sound("golpe (1).wav"))
+    pygame.mixer.Channel(channel).play(pygame.mixer.Sound("hit1.wav"))
 
 def ReadFile():
     """This function reads the file of the scores
@@ -574,9 +702,6 @@ all_sand_bullets = sprite.Group()
 all_fire_bullets = sprite.Group()
 all_arrows = sprite.Group()
 all_rooks_sprite = sprite.Group()
-
-
-
 
 #create an instance of counters
 counters = Counters(startingMoney,moneyRate,startingMoneyBooster,WIN_TIME,ENEMIES_PASSED,FIRE_RATE)
@@ -889,9 +1014,11 @@ def GameOverAnimation():
 
     animationWindow.mainloop()
 
-MainloopLevel1()
+
+#MainloopLevel1()
 #WinningAnimation()
 #GameOverAnimation()
+WelcomeWindow()
 
 pygame.quit()
 
