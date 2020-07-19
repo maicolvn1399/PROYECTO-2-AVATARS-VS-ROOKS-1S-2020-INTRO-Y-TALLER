@@ -15,7 +15,7 @@ import os
 import random
 from pygame.locals import*
 import time
-
+pygame.init()
 salir1=False
 avatar_knight_list = []
 avatar_archer_list = []
@@ -60,7 +60,7 @@ class SandRook(pygame.sprite.Sprite):
 
     def load_sand_rook(self):
         if hasattr(self,"image") and hasattr(self,"rect"):
-            ventana.blit(self.image,self.rect)
+            win.blit(self.image,self.rect)
         else:
             print("IMAGE SAND ROOK ERROR")
 
@@ -74,7 +74,7 @@ class SandRook(pygame.sprite.Sprite):
             self.shot_sand_count += 1
             if self.shot_sand_count == 25:
                 sandBullet = SandBullet(self)
-                ventana.sand_bullet_list.append(sandBullet)
+                win.sand_bullet_list.append(sandBullet)
                 self.shot_sand_count = 0
 
         for avatar_archer in avatar_archer_list:  # Un bucle por cada tipo de avatar
@@ -85,7 +85,7 @@ class SandRook(pygame.sprite.Sprite):
             self.shot_sand_count += 1
             if self.shot_sand_count == 25:
                 sandBullet = SandBullet(self)
-                ventana.sand_bullet_list.append(sandBullet)
+                win.sand_bullet_list.append(sandBullet)
                 self.shot_sand_count = 0
 
         for avatar_cannibal in avatar_cannibal_list:  # Un bucle por cada tipo de avatar
@@ -96,7 +96,7 @@ class SandRook(pygame.sprite.Sprite):
             self.shot_sand_count += 1
             if self.shot_sand_count == 25:
                 sandBullet = SandBullet(self)
-                ventana.sand_bullet_list.append(sandBullet)
+                win.sand_bullet_list.append(sandBullet)
                 self.shot_sand_count = 0
 
         for avatar_lumberjack in avatar_lumberjack_list:  # Un bucle por cada tipo de avatar
@@ -107,7 +107,7 @@ class SandRook(pygame.sprite.Sprite):
             self.shot_sand_count += 1
             if self.shot_sand_count == 25:
                 sandBullet = SandBullet(self)
-                ventana.sand_bullet_list.append(sandBullet)
+                win.sand_bullet_list.append(sandBullet)
                 self.shot_sand_count = 0
 
 
@@ -163,7 +163,7 @@ class SandBullet(pygame.sprite.Sprite):
                     avatar_lumberjack.live = False
 
     def display_sand_bullet(self):
-        ventana.blit(self.image,self.rect)
+        win.blit(self.image,self.rect)
 
 class AvatarKnight(pygame.sprite.Sprite):
     def __init__(self,x,y):
@@ -213,7 +213,7 @@ class AvatarKnight(pygame.sprite.Sprite):
             print("eliminar sand rook")
 
     def display_avatar_knight(self):
-        ventana.blit(self.image,self.rect)
+        win.blit(self.image,self.rect)
 
 class RockRook(pygame.sprite.Sprite):
     def __init__(self,x,y,shootSeconds):
@@ -485,7 +485,7 @@ class WaterRook(pygame.sprite.Sprite):
             self.shot_water_count_count += 1
             if self.shot_water_count_count == 25:
                 waterBullet = WaterBullet(self)
-                ventana.sand_bullet_list.append(waterBullet)
+                win.sand_bullet_list.append(waterBullet)
                 self.shot_water_count_count = 0
 
 
@@ -497,7 +497,7 @@ class WaterRook(pygame.sprite.Sprite):
             self.shot_water_count_count += 1
             if self.shot_water_count_count == 25:
                 waterBullet = WaterBullet(self)
-                ventana.sand_bullet_list.append(waterBullet)
+                win.sand_bullet_list.append(waterBullet)
                 self.shot_water_count_count = 0
 
 
@@ -509,7 +509,7 @@ class WaterRook(pygame.sprite.Sprite):
             self.shot_water_count_count += 1
             if self.shot_water_count_count == 25:
                 waterBullet = WaterBullet(self)
-                ventana.sand_bullet_list.append(waterBullet)
+                win.sand_bullet_list.append(waterBullet)
                 self.shot_water_count_count = 0
 
 
@@ -521,7 +521,7 @@ class WaterRook(pygame.sprite.Sprite):
             self.shot_water_count_count += 1
             if self.shot_water_count_count == 25:
                 waterBullet = WaterBullet(self)
-                ventana.sand_bullet_list.append(waterBullet)
+                win.sand_bullet_list.append(waterBullet)
                 self.shot_water_count_count = 0
 
 
@@ -899,9 +899,57 @@ def load_avatars_lumberjacks():
             a.hit_rook3()
         else:
             avatar_lumberjack_list.remove(a)
+#----input box-------------------------------------
+win = pygame.display.set_mode((640, 480))
+COLOR_INACTIVE = pygame.Color('chartreuse3')
+COLOR_ACTIVE = pygame.Color('chartreuse1')
+FONT = pygame.font.Font(None, 32)
 
 
-pygame.init()
+class InputBox:
+
+    def __init__(self, x, y, w, h, text=''):
+        self.rect = pygame.Rect(x, y, w, h)
+        self.color = COLOR_INACTIVE
+        self.text = text
+        self.txt_surface = FONT.render(text, True, self.color)
+        self.active = False
+    def gettxt(self):
+          return self.text
+    def settxt(self,txt):
+          self.text=txt
+    def handle_event(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            # If the user clicked on the input_box rect.
+            if self.rect.collidepoint(event.pos):
+                # Toggle the active variable.
+                self.active = not self.active
+            else:
+                self.active = False
+            # Change the current color of the input box.
+            self.color = COLOR_ACTIVE if self.active else COLOR_INACTIVE
+        if event.type == pygame.KEYDOWN:
+            if self.active:
+                if event.key == pygame.K_BACKSPACE:
+                    self.text = self.text[:-1]
+                else:
+                    self.text += event.unicode
+                # Re-render the text.
+                self.txt_surface = FONT.render(self.text, True, self.color)
+
+    def update(self):
+        # Resize the box if the text is too long.
+        width = max(200, self.txt_surface.get_width()+10)
+        self.rect.w = width
+
+    def draw(self, win):
+        # Blit the text.
+        win.blit(self.txt_surface, (self.rect.x+5, self.rect.y+5))
+        # Blit the rect.
+        pygame.draw.rect(win, self.color, self.rect, 4)
+            
+
+
 #----Fondos------------------------------------
 fondo1= pygame.image.load("5.jpg")
 
@@ -943,7 +991,7 @@ buttoncolor5=[COLOR5,COLOR51]
 
 
 #------------------------------------------------
-ventana= pygame.display.set_mode((WIDTH,HEIGH))
+win= pygame.display.set_mode((WIDTH,HEIGH))
 pygame.display.set_caption("")
 clock=pygame.time.Clock()
 
@@ -957,7 +1005,8 @@ WINDOWWIDTH = 1100 #window's width in pixel
 WINDOWHEIGHT = 900 #window's height in pixel
 BG = pygame.image.load("backgroundLevel1.png")
 
-DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
+DISPLAYSURF = win
+
 #---------------------------------------------------
 
 rookFireCard = pygame.image.load("clickableFireRook.jpg")
@@ -1013,17 +1062,17 @@ def textObject(text,color,size):
 def message(msg,color,desx=0,desy=0,size="small"):
      text,rect_text=textObject(msg,color,size)
      rect_text.center=int(WIDTH/2)+desx,int((HEIGH/2)+desy)
-     ventana.blit(text,rect_text)
+     win.blit(text,rect_text)
 #----texto del boton-----------------------------
 def buttontext(msg,color,buttonx,buttony,anchob,highb,size="small"):
      text,rect_text=textObject(msg,color,size)
      rect_text.center=int(buttonx+anchob/2),int((buttony+highb/2))
-     ventana.blit(text,rect_text)     
+     win.blit(text,rect_text)     
 #----Botones-------------------------------------
 """
-entrada=textodel boton,superficie,el color del boton(estado), el lugar,el tamaño, un identificador, un mensaje,un segundo mensaje
-salida= coloca uun boton y le permite funcionar
-restricciones= el tamaño y las posicion tiene que ser listas
+entry=text,surface,state,position,size,ID 
+return=buttons and their functions 
+restraint:size, positions have to be part of a list
 """
 
 def buttons(text,surface,state,position,size,ID=None,ms=None,ms2=None):
@@ -1037,13 +1086,13 @@ def buttons(text,surface,state,position,size,ID=None,ms=None,ms2=None):
                     option()
                elif ID=="info":
                     pygame.mixer.music.pause()
-                    instruction()
-               elif ID=="punctuation":
-                    punctuation()
+                    instructions()
+               elif ID=="point":
+                    puntuations()
                     pygame.mixer.music.pause()
                elif ID=="credits":
                     pygame.mixer.music.pause()
-                    credits()
+                    Credits()
                elif ID=="exit":
                     Gameintro=False
                     quit()
@@ -1051,17 +1100,17 @@ def buttons(text,surface,state,position,size,ID=None,ms=None,ms2=None):
                     introduction()
                elif ID=="level1":
                     pygame.mixer.music.stop()
-                    StartCount(ms,1)
+                    StartCount(ms,ms2,1)
                elif ID=="level2":
-                    startCount(ms,2)
+                    startCount(ms,mas2,2)
                elif ID=="level3":
-                    startCount(ms,3)
+                    startCount(ms,ms2,3)
                elif ID=="pause":
                     pause()
                elif ID=="back":
                     pause=False
                elif ID=="ok":
-                    levels(ms)
+                    levels(ms,ms2)
                
      else:
           
@@ -1079,7 +1128,7 @@ def Credits():
                     if event.key==pygame.K_x:
                          quit()
                win.blit(fondo1,(0,0))
-               buttons("volver",win,buttoncolor4,button5,buttonsize1,ID="salir1") 
+               buttons("volver",win,buttoncolor4,button5,buttonsize1,ID="exit1") 
                message("Creditos",COLOR4,0,-200,size="big")
                message("Desarrollado en Costa Rica",BLACK,0,-75,size="small")
                message("Tecnologico de Costa Rica, Ingenieria en Computadores",BLACK,0,-40,size="small")
@@ -1092,7 +1141,7 @@ def Credits():
                clock.tick(15) 
                      
 #----pantallade inicio---------------------------
-def introduction():
+def  introduction():
      #pygame.mixer.music.load("cancion1.mp3")
      #pygame.mixer.music.set_volume(0.125) 
      Gameintro=True
@@ -1104,11 +1153,11 @@ def introduction():
                     Gameintro=False
                     quit()  
                win.blit(fondo1,(0,0))
-               buttons("Inicio",win,buttoncolor1,button1,buttonsize1,ID="inicio")
+               buttons("Inicio",win,buttoncolor1,button1,buttonsize1,ID="start")
                buttons("Instrucciones",win,buttoncolor2,button2,buttonsize1,ID="info")
-               buttons("Mejor puntaje",win,buttoncolor3,button3,buttonsize1,ID="puntajes")
-               buttons("Creditos",win,buttoncolor4,button4,buttonsize1,ID="creditos")
-               buttons("Salir",win,buttoncolor5,button5,buttonsize1,ID="salir") 
+               buttons("Mejor puntaje",win,buttoncolor3,button3,buttonsize1,ID="point")
+               buttons("Creditos",win,buttoncolor4,button4,buttonsize1,ID="credits")
+               buttons("Salir",win,buttoncolor5,button5,buttonsize1,ID="exit") 
                message("Avatars VS Rooks",COLOR1,-15,-200,size="big")
                pygame.display.update()
                clock.tick(15)
@@ -1123,7 +1172,7 @@ def instructions():
                     
                win.blit(fondo1,(0,0))
                
-               botones("Volver",win,buttoncolor2,button5,buttonsize1,ID="salir1") 
+               buttons("Volver",win,buttoncolor2,button5,buttonsize1,ID="exit1") 
                message("Instrucciones",COLOR2,0,-200,size="big")
                message(" ",BLACK,-75,size="regular")
                message(" ",BLACK,-40,size="regular")
@@ -1132,77 +1181,43 @@ def instructions():
                pygame.display.update()
                clock.tick(15)
 #----opciones-------------------------------------
-def options():
-    font = pygame.font.SysFont("normal", 40)
+def option():
+    lock = pygame.time.Clock()
+    input_box1 = InputBox(450,240, 360, 32)
+    input_box2 = InputBox(450,325, 360, 32)
+    input_boxes = [input_box1, input_box2]
+    done = False
 
-    input_box = pygame.Rect(button2,buttonsize1)
-    color_inactive = pygame.Color('chartreuse3')
-    color_active = pygame.Color('chartreuse1')
-    color = color_inactive
-    active = False
-    text = ''
-    input_box1 = pygame.Rect(button1,buttonsize1)
-    color_inactive1 = pygame.Color('chartreuse3')
-    color_active1 = pygame.Color('chartreuse1')
-    color1 = color_inactive
-    active1 = False
-    text1 = ''
-    atras=True
-    while atras:
-          for event in pygame.event.get():
-               if event.type==pygame.QUIT:
-                    atras=False
-               if event.type == pygame.MOUSEBUTTONDOWN:
-                    if input_box.collidepoint(event.pos):
-                         active = not active
-                    else:
-                         active = False
-                    color = color_active if active else color_inactive
-               if event.type==pygame.KEYDOWN:
-                    if active:
-                         if event.key == pygame.K_RETURN:
-                              print (text)
-                              levels(text,text1)
-                              text = ''
-                              
-                         elif event.key == pygame.K_BACKSPACE:
-                              text = text[:-1]
-                         else:
-                              text += event.unicode
-               if event.type == pygame.MOUSEBUTTONDOWN:
-                     if input_box1.collidepoint(event.pos):
-                          active1 = not active1
-                     else:
-                         active1 = False
-                     color1 = color_active if active1 else color_inactive1
-               if event.type==pygame.KEYDOWN:
-                     if active1:
-                          if event.key == pygame.K_RETURN:
-                              print (text1)
-                              levels(text,text1)
-                              text1 = ''
-                              
-                          elif event.key == pygame.K_BACKSPACE:
-                              text1 = text[:-1]
-                          else:
-                              text1 += event.unicode
-                    
-               
-               win.blit(fondo1,(0,0))
-               txt_surface = font.render(text, True, color)
-               width = max(320, txt_surface.get_width()+20)
-               input_box.w = width
-               win.blit(txt_surface, (input_box.x+5, input_box.y+5))
-               pygame.draw.rect(win, color, input_box,4)
-               buttons("Volver",win,buttoncolor1,button4,buttonsize1,ID="salir1")
-               message("Opciones del juego",COLOR1,-20,-200,size="big")
-               message("Ingrese su nombre de usuario",COLOR11 ,+30,-30,size="regular")
-               message("y presione 'ENTER' al finalizar.",COLOR11,+30,size="regular")
-               pygame.display.flip() 
-               pygame.display.update()
-               clock.tick(15)
+    while not done:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                done = True
+            for box in input_boxes:
+                box.handle_event(event)
+            if event.type == pygame.KEYDOWN:
+                 if event.key == pygame.K_RETURN:
+                     if input_boxes[0].gettxt()!='' and input_boxes[1].gettxt()!='':
+                         levels(input_boxes[0].gettxt(),input_boxes[1].gettxt())
+                         input_boxes[0].settxt('')
+                         input_boxes[1].settxt('')
+                                
+        for box in input_boxes:
+            box.update()
+
+        win.blit(fondo1,(0,0))
+        for box in input_boxes:
+            box.draw(win)     
+        buttons("Volver",win,buttoncolor1,button4,buttonsize1,ID="exit1")
+        message("Opciones del juego",COLOR1,-20,-200,size="big")
+        message("Ingrese su nombre de usuario",COLOR11 ,+30,-80,size="regular")
+        message("Ingrese la frecuencia de ataque(digitos)",COLOR11 ,+30,0,size="regular")
+        message("presione 'ENTER' al finalizar.",COLOR11,+30,+90,size="regular")
+        pygame.display.flip() 
+        pygame.display.update()
+        clock.tick(15)
 #----niveles---------------------------------------
-def levels(text):
+def levels(name, speed):
+     
      level=True
      while level:
           for event in pygame.event.get():
@@ -1212,17 +1227,18 @@ def levels(text):
                
                     
                win.blit(fondo1,(0,0))
-               buttons("Volver",win,buttoncolor2,button5,buttonsize1,ID="salir1")
-               buttons("Nivel 1",win,buttoncolor1,button2,buttonsize1,ID="nivel1",ms=str(text))
-               buttons("Nivel 2",win,buttoncolor3,button3,buttonsize1,ID="nivel2",ms=str(text))
-               buttons("Nivel 3",win,buttoncolor5,button4,buttonsize1,ID="nivel3",ms=str(text))
-               message("Hola"+" "+str(text),COLOR1,-100,size="big")
-               message("Selecciona un nivel",COLOR1,+50,size="regular")
+               buttons("Volver",win,buttoncolor2,button5,buttonsize1,ID="exit1")
+               buttons("Nivel 1",win,buttoncolor1,button2,buttonsize1,ID="level1",ms=str(name),ms2=str(speed))
+               buttons("Nivel 2",win,buttoncolor3,button3,buttonsize1,ID="level2",ms=str(name),ms2=str(speed))
+               buttons("Nivel 3",win,buttoncolor5,button4,buttonsize1,ID="level3",ms=str(name),ms2=str(speed))
+               message("Hola"+" "+str(name),COLOR1,0,-100,size="big")
+               message("Selecciona un nivel",COLOR1,0,0,size="regular")
+                      
               
                pygame.display.update()
                clock.tick(15)               
 #----Puntuaciones----------------------------------
-def puntuaciones():
+def puntuations():
      entry= True
      while entry:
           for event in pygame.event.get():
@@ -1230,7 +1246,7 @@ def puntuaciones():
                     entry=False
                     
                win.blit(fondo1,(0,0))
-               buttons("Volver",win,buttoncolor3,button5,buttonsize1,ID="salir1")
+               buttons("Volver",win,buttoncolor3,button5,buttonsize1,ID="exit1")
                message("Puntuaciones",COLOR3,0,-200,size="big")
               # mensaje(contenido,BLANCO,tam="mediana")
                pygame.display.update()
@@ -1239,11 +1255,11 @@ def puntuaciones():
 
 #----Cuenta inicial-------------------------------
 """               
-entrada=nombre del jugador
-salida=cuenta regresiva
-restriccion=no tiene
+entry=player name
+return=count 
+restraint=none
 """               
-def StartCount(name,n):
+def StartCount(name,speed,n):
     count=True
 
     while count:
@@ -1261,7 +1277,7 @@ def StartCount(name,n):
                  message("GO!",COLOR11,size="giant")
                  pygame.display.update()
                  time.sleep(1)
-                 Gameloop(name)
+                 Gameloop(name,speed)
             if n==2:
                  win.blit(fondo1,(0,0))
                  message("READY",COLOR11,size="giant")            
@@ -1271,7 +1287,7 @@ def StartCount(name,n):
                  message("GO!",COLOR11,size="giant")
                  pygame.display.update()
                  time.sleep(1)
-                 Gameloop1(name)
+                 Gameloop1(name,speed)
             if n==3:
                  win.blit(fondo1,(0,0))
                  message("READY",COLOR11,size="giant")            
@@ -1282,7 +1298,7 @@ def StartCount(name,n):
                  pygame.display.update()
                  time.sleep(1)
                  
-                 Gameloop2(name)
+                 Gameloop2(name,speed)
 
 
 
@@ -1290,10 +1306,12 @@ def StartCount(name,n):
 
 
 #----nivel1----------------------------------------
-#entrada= 
-#salida=
+"""entry=player name 
+return=surface with  the game 
+restraint:none
+"""
           
-def Gameloop(name):
+def Gameloop(name,speed):
 #Constantes para iniciar la matriz--------
      FPSCLOCK = pygame.time.Clock()
      mousex = 0
@@ -1376,7 +1394,7 @@ def Gameloop(name):
 
                #ventana.blit(backgroundLevel1,(0,0))
          message("Nivel 1",COLOR3,-200,size="big")
-         buttons("Pausa",win,buttoncolor5,button5,buttonsize1,ID="pausa")
+         buttons("Pausa",win,buttoncolor5,button5,buttonsize1,ID="pause")
          pygame.display.update()
          clock.tick(60)
 ##-------condicion de game over--------------------
@@ -1388,10 +1406,11 @@ def Gameloop(name):
            
 #----nivel2----------------------------------------
 """
-entrada=nombre del jugador 
-salida=pantalla de juego con enemigos y un jugado, tambien incluye marcador y tiempo
+entry=player name 
+return=surface with  the game 
+restraint:none
 """
-def Gameloop1(name):
+def Gameloop1(name,speed):
      
 ##     pygame.mixer.music.load("cancion2.mp3")
 ##     pygame.mixer.music.play()
@@ -1415,10 +1434,11 @@ def Gameloop1(name):
 
 #----Nivel3----------------------------------------
 """          
-#entrada=nombre del jugador 
-#salida=pantalla de juego con enemigos y un jugado, tambien incluye marcador y tiempo
+entry=player name 
+return=surface with  the game 
+restraint:none
 """
-def Gameloop2(name):
+def Gameloop2(name,speed):
      
 ##     pygame.mixer.music.load("cancion2.mp3")
 ##     pygame.mixer.music.play()
@@ -1435,7 +1455,7 @@ def Gameloop2(name):
                     exit1=True
                win.blit(fondo1,(0,0))
                message("Nivel 3",COLOR3,-200,size="big")
-               buttons("Pausa",win,buttoncolor5,button5,buttonsize1,ID="pausa")
+               buttons("Pausa",win,buttoncolor5,button5,buttonsize1,ID="pause")
           pygame.display.update()
           clock.tick(60)          
 #----Game over-------------------------------------
@@ -1459,8 +1479,9 @@ def pause():
      while pausado:
           for event in pygame.event.get():
 
-               buttons("volver",win,buttoncolor4,button4,buttonsize1,ID="back") 
+               buttons("volver",win,buttoncolor4,button4,buttonsize1,ID="back")
                buttons("salir",win,buttoncolor5,button5,buttonsize1,ID="exit1")
+               buttons("menu principal",win,buttoncolor5,button5,buttonsize1,ID="exit")
                
 
           message("Juego en pausa",COLOR2,size="big")
@@ -1528,10 +1549,11 @@ def LoadImage(ImgName):
     imageToLoad = PhotoImage(file=path)
     return imageToLoad
 #---------------------------------------------------------------------------------------------------
-introduccion()
-creditos()
-opciones()
-puntuaciones()
+introduction()
+Credits()
+instruction()
+option()
+puntuations()
 Gameloop()
 Gameloop1()
 Gameloop2()
