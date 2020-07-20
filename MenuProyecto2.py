@@ -1276,7 +1276,7 @@ def Gameloop():
 
             if column != 0 and row != 5:
                 if column != 1:
-                    draw.rect(win, tile_color,
+                    draw.rect(BACKGROUND, tile_color,
                               (WIDTH * column, HEIGHT * row, WIDTH, HEIGHT), 1)
 
     win.blit(win, (0, 0))
@@ -1336,7 +1336,7 @@ def Gameloop():
         for tile_row in tile_grid:
             for tile in tile_row:
                 if bool(tile.rook):
-                    win.blit(win, (tile.rect.x, tile.rect.y), tile.rect)
+                    win.blit(BACKGROUND, (tile.rect.x, tile.rect.y), tile.rect)
 
         # Set up detection for collision with background tiles
         for avatar_archer in all_avatars_archers:
@@ -1373,7 +1373,7 @@ def Gameloop():
         # update rooks that have been set
         for tile_row in tile_grid:
             for tile in tile_row:
-                tile.draw_rook(win, rook_applicator)
+                tile.draw_rook(BACKGROUND, rook_applicator)
 
         # for bullet in all_bullets:
         # bullet.update(win)
