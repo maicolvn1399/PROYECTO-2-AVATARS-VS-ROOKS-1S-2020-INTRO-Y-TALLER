@@ -20,13 +20,20 @@ Estudiantes: Raquel Lizano y Michael Valverde
 II Proyecto - I Semestre - 2020
 """
 
+
+"""Code based on 
+https://www.youtube.com/watch?v=PVY46hUp2EM
+https://www.youtube.com/watch?v=giskNuBHPsU&t=17s
+https://inventwithpython.com/pygame/
+https://books.google.co.cr/books/about/Code_This_Game.html?id=EsLkDwAAQBAJ&source=kp_book_description&redir_esc=y
+https://www.youtube.com/watch?v=HHQV3ifJopo&t=51s"""
+
 #Initialize pygame
 pygame.init()
 font.init()
-
+#constants for gui
 display_width = 800
 display_height = 600
-
 
 avatarsDead = []
 
@@ -62,6 +69,7 @@ WIN_TIME = FRAME_RATE * 60 * 3
 REG_SPEED = 2
 SLOW_SPEED = 1
 
+#lists for locations
 rock_rook_coordinates = []
 sand_rook_coordinates = []
 fire_rook_coordinates = []
@@ -70,6 +78,7 @@ water_rook_coordinates = []
 all_rooks_created = []
 new_rooks = []
 playTilesList = []
+
 
 FIRE_RATE = 600
 
@@ -96,8 +105,6 @@ GAME_WINDOW.blit(BACKGROUND,(0,0))
 
 tile_color = WHITE
 
-
-
 #set up enemies
 avatar_archer_img = image.load("avatarArcher.png")
 #avatar_archer_surf = Surface.convert_alpha(avatar_archer_img)
@@ -118,10 +125,6 @@ AVATAR_lUMBERJACK = avatar_lumberjack_img
 water_rook = image.load("waterRook.png")
 water_rook_surf = Surface.convert_alpha(water_rook)
 WATER_ROOK = transform.scale(water_rook_surf,(WIDTH,HEIGHT))
-
-
-
-
 
 fire_rook = image.load("fireRook.png")
 fire_rook_surf = Surface.convert_alpha(fire_rook)
@@ -179,7 +182,7 @@ welcomeWindow = Tk()
 playerName = ""
 
 def WelcomeWindow():
-    """This is the first window the player sees on screen, it allows the player to type in their name and select a level,
+    """This is the first window the player sees on screen, it allows the player to enter their name and select a level,
     or see the scores from previous games as well as the instructions and credits  """
     global welcomeWindow
     COLOR1 = "#FF8903"
@@ -233,7 +236,7 @@ def WelcomeWindow():
     welcomeWindow.mainloop()
 
 def TopScoresWindow():
-    """"GUI to show the top best scores of the game"""
+    """"GUI to show the scores of the game"""
     ScoresWindow = Toplevel()
     COLOR1 = "#FF8903"
     COLOR2 = "#76E400"
@@ -277,14 +280,14 @@ def Instructions():
     labelBackground.image = backgroundImage
     message = Message(instructionsWindow, text="The objective of the game is to kill the avatars appearing in the "
                                                "right side of the screen, to do so, you have to select one rook"
-                                               " from the bottom of the screen, there are four types of rooks:"
+                                               "from the bottom of the screen,you have to select the rook with your mouse, if you have enough money to get it the rook will be placed, there are four types of rooks:"
                                                "\nWater rook: shoots water to the enemies "
                                                "\nRock rook: shoots rocks to the enemies "
                                                "\nSand rook: throws sand to the opponents "
                                                "\nFire rook: throws fire balls to the opponents, then you have to and place it to the game board "
                                                "once the rook is set, it will begin to shoot the enemies, be careful because "
-                                               "the avatars will fight back.\n\n Good luck!", bg=COLOR5, justify="left", relief="ridge", font="Fixedsys 13")
-    message.place(x=50, y=50)
+                                               "the avatars will appear constantly and they will fight back.\n\n Good luck!", bg=COLOR5, justify="left", relief="ridge", font="Fixedsys 13")
+    message.place(x=20, y=50)
     instructionsWindow.mainloop()
 
 def Credits():
@@ -298,20 +301,33 @@ def Credits():
     creditsWindow.minsize(450, 500)
     creditsWindow.resizable(width=NO, height=NO)
     creditsWindow.title("Credits")
+
+
     backgroundImage = LoadImage("background.gif")
     labelBackground = Label(creditsWindow, image=backgroundImage)
     labelBackground.place(x=0, y=0, relwidth=1, relheight=1)
     labelBackground.image = backgroundImage
 
+    img_raquel = LoadImage("raquel.gif")
+    labelRaquel = Label(creditsWindow, image=img_raquel)
+    labelRaquel.place(x=50, y=300)
+    labelRaquel.image = img_raquel
+
+    img_michael = LoadImage("michael.gif")
+    labelMichael = Label(creditsWindow, image=img_michael)
+    labelMichael.place(x=300,y=300)
+    labelMichael.image = img_michael
+
+
     message = Message(creditsWindow, text="Desarrollado en Costa Rica\n\n"
-                                          "Tecnologico de Costa Rica, Ingenieria en Computadores\n\n"
-                                          "CE1102-Taller de Programacion, Grupo 4\n\n"
+                                          "Tecnológico de Costa Rica, Ingeniería en Computadores\n\n"
+                                          "CE1102-Taller de Programación, Grupo 4\n\n"
                                           "Profesor Jason Leitón Jiménez\n\n"
                                           "Version 1.0\n\n"
                                           "Realizado por Raquel Lizano y Michael Valverde\n\n"
                                           "II Proyecto - I Semestre - 2020\n\n", bg=COLOR2, justify="left", relief="ridge", font="Fixedsys 16")
 
-    message.place(x=50, y=80)
+    message.place(x=50, y=40)
 
     creditsWindow.mainloop()
 
@@ -320,16 +336,15 @@ def ValidateInputs(name, secondsToShoot,level):
     """Function that validates the inputs before running the game, the name should be an string and the level should be a integer,
 otherwise it won't run and will ask the user to type or click valid value"""
     if isinstance(name, str) and not name.isspace() and not len(name) == 0 and isinstance(secondsToShoot,int) and level == "LEVEL1":
-        playerName = name
+        print("SECONDS TO SHOOT "+str(secondsToShoot))
         return MainloopLevel1(name,secondsToShoot)
     elif isinstance(name, str) and not name.isspace() and not len(name) == 0 and isinstance(secondsToShoot,int) and level == "LEVEL2":
-        playerName = name
         return MainloopLevel2(name,secondsToShoot)
     elif isinstance(name, str) and not name.isspace() and not len(name) == 0 and isinstance(secondsToShoot,int) and level == "LEVEL3":
-        playerName = name
         return MainloopLevel3(name,secondsToShoot)
     else:
         return messagebox.showerror("Error", "You have to enter a valid player name or a valid amount of seconds")
+
 
 def LoadImage(ImgName):
     """Loads and image"""
@@ -339,6 +354,7 @@ def LoadImage(ImgName):
 
 #set up classes
 class Avatar(sprite.Sprite):
+    """Create avatars with specific features, the object created will be the enemy of the game"""
     def __init__(self,type,image,attackPower,health,walkSeconds):
         super().__init__()
         self.type = type
@@ -355,7 +371,6 @@ class Avatar(sprite.Sprite):
         self.lane = randint(0,4)
         all_avatars.add(self)
         self.image = image
-        #AVATAR_ARCHER.copy()
         y = 50 + self.lane * 100
         self.health = health
         self.attackPower = attackPower
@@ -371,27 +386,28 @@ class Avatar(sprite.Sprite):
     def getY(self):
         return self.rect.y
 
+    def setSpeed(self,newSpeed):
+        self.speed = newSpeed
+
     def getAvatarsKilledCount(self):
         return self.avatars_killed_count
 
     def update(self,game_window,counters):
+        """this method makes the avatar move"""
         game_window.blit(BACKGROUND,
                          (self.rect.x, self.rect.y), self.rect)
 
         timer = pygame.time.get_ticks()
         timerWalk = int(timer/1000)
-
+        """Avatars move """
         if timerWalk%self.walkSeconds == 0 and not self.stop:
-            self.rect.x -= self.speed*2.1
+            self.rect.x -= self.speed*1
             self.stop = True
         else:
             self.stop = False
 
-        #isColliding = sprite.spritecollide(self,all_bullets,True)
-        #if isColliding is not None:
-            #for bullet in isColliding:
-                #self.health -= -1
 
+        """Check for collisions with bullets"""
         isCollidingWithFireBullet = sprite.spritecollide(self,all_fire_bullets,True)
         if isCollidingWithFireBullet is not None:
             for bullet in isCollidingWithFireBullet:
@@ -416,11 +432,12 @@ class Avatar(sprite.Sprite):
                 PlayHitSound(5)
                 self.health -= 2
 
-
+        """When an avatar cross the board"""
         if self.rect.x <= 100:
             counters.enemies_passed += 1
             self.despawn_wait = 0
 
+        """Check for when the avatar is dead"""
         if self.despawn_wait is None:
             if self.health <= 0:
                 self.image = EXPLOSION
@@ -437,6 +454,7 @@ class Avatar(sprite.Sprite):
         game_window.blit(self.image,(self.rect.x,self.rect.y))
 
     def attack(self,tile):
+        """Avatar attacks when is close to a rook"""
         if tile.rook == WATERrook:
             self.speed = SLOW_SPEED
         elif tile.rook == FIRErook:
@@ -446,6 +464,7 @@ class Avatar(sprite.Sprite):
 
 globalTimer = 0
 class Counters(object):
+    """Class for counters on the screen"""
     def __init__(self,enemy_money,money_rate,money_booster,timer,enemies_passed,fire_rate,gameTimerSeconds,name):
         self.loop_count = 0
         self.display_font = font.Font("font.ttf",25)
@@ -463,11 +482,19 @@ class Counters(object):
         self.name = name
         self.name_rect = None
 
+    def setFIRE_RATE(self,NEW_FIRE_RATE):
+        self.fire_rate = NEW_FIRE_RATE
+
+    def getFIRE_RATE(self):
+        return self.fire_rate
+
     def increment_money(self):
+        """Increment money"""
         if self.loop_count % self.money_rate == 0:
             self.enemy_money += self.money_booster
 
     def draw_money(self,game_window):
+        """Display money on screen"""
         if self.money_rect:
             game_window.blit(BACKGROUND,(self.money_rect.x,self.money_rect.y),self.money_rect)
         money_surface = self.display_font.render("$"+str(self.enemy_money),True,WHITE)
@@ -477,6 +504,7 @@ class Counters(object):
         game_window.blit(money_surface,self.money_rect)
 
     def draw_enemies_passed(self,game_window):
+        """Display the amount of avatars that have crossed the game board """
         if bool(self.enemies_passed_rect):
             game_window.blit(BACKGROUND,(self.enemies_passed_rect.x,self.enemies_passed_rect.y),self.enemies_passed_rect)
 
@@ -511,6 +539,7 @@ class Counters(object):
         game_window.blit(name_surface, self.name_rect)
 
     def update(self,game_window):
+        """Update all the methods of this class"""
         self.loop_count += 1
         self.increment_money()
         self.draw_money(game_window)
@@ -528,41 +557,49 @@ class Counters(object):
         self.draw_name(game_window)
 
     def update_rock_rook(self):
+        """Create a new bullet given the coordinates of a rook"""
         for location in rock_rook_coordinates:
             if self.loop_count%self.fire_rate == 0:
                 Bullets(location,"ROCK_ROOK")
 
     def update_fire_rook(self):
+        """Create a new bullet given the coordinates of a rook"""
         for location in fire_rook_coordinates:
             if self.loop_count%self.fire_rate == 0:
                 Bullets(location,"FIRE_ROOK")
 
     def update_water_rook(self):
+        """Create a new bullet given the coordinates of a rook"""
         for location in water_rook_coordinates:
             if self.loop_count%self.fire_rate == 0:
                 Bullets(location,"WATER_ROOK")
 
     def update_sand_rook(self):
+        """Create a new bullet given the coordinates of a rook"""
         for location in sand_rook_coordinates:
             if self.loop_count%self.fire_rate == 0:
                 Bullets(location,"SAND_ROOK")
 
     def update_avatar_archer_objects(self):
+        """Create a new bullet given the coordinates of a rook"""
         for i in all_avatars_archers:
             if self.loop_count % 600 == 0:
                 AvatarObject(i.getX(),i.getY(),"ARROW",ARROW)
 
     def update_avatar_knights_objects(self):
+        """Create a new bullet given the coordinates of a rook"""
         for i in all_avatars_knights:
             if self.loop_count%900 == 0:
                 AvatarObject(i.getX(), i.getY(), "SHIELD",SHIELD)
 
     def update_avatar_cannibal_objects(self):
+        """Create a new object for the avatars given the coordinates each avatar"""
         for i in all_avatars_cannibals:
             if self.loop_count % 180 == 0:
                 AvatarObject(i.getX(), i.getY(), "STICK",STICK)
 
     def update_avatar_lumberjack_objects(self):
+        """Create a new object for the avatars given the coordinates each avatar"""
         for i in all_avatars_lumberjacks:
             if self.loop_count % 300 == 0:
                 AvatarObject(i.getX(), i.getY(), "AXE",AXE)
@@ -574,6 +611,7 @@ class Counters(object):
                 print("IS COLLIDING")
 
 class Rook(sprite.Sprite):
+    """Class to create a rook"""
     def __init__(self,type,cost,type_img):
         self.type = type
         if type == "WATER_ROOK":
@@ -585,14 +623,14 @@ class Rook(sprite.Sprite):
         else:
             self.health = 2
 
-
         self.cost = cost
         self.type_img = type_img
         self.rect = self.type_img.get_rect()
         self.bullet_speed = 1
-        self.bullet_stop = False
+        self.bullet_stop = False #Atribute to shoot objects to the avatars
 
 class RookApplicator(object):
+    """Class to make a rook appear and function on screen"""
     def __init__(self):
         self.selected = None
 
@@ -611,13 +649,16 @@ class RookRemover(object):
         self.selected = tile.unset_rook(self.selected,counters)
 
 class BackgroundTile(sprite.Sprite):
+    """Draw invisibles tiles for the matrix on the screen"""
     def __init__(self,rect):
         super().__init__()
         self.rook = None
         self.rect = rect
 
 class PlayTile(BackgroundTile):
+    """Make tiles interactive for when a tile gets clicked"""
     def set_rook(self,rook,counters):
+        """Sets the rook in the position the player chose"""
         if bool(rook) and not bool(self.rook):
             counters.enemy_money -= rook.cost
             self.rook = rook
@@ -642,6 +683,7 @@ class PlayTile(BackgroundTile):
         return None
 
     def draw_rook(self,game_window,rook_applicator):
+        """Draw a rook """
         if bool(self.rook):
             game_window.blit(self.rook.type_img,(self.rect.x,self.rect.y))
 
@@ -650,6 +692,7 @@ class PlayTile(BackgroundTile):
                 rook.kill()
 
     def attack_rook(self):
+        """Method for when a rook is being attacked"""
         for i in all_arrows:
             if isColliding(self.rect.x,self.rect.y,i.getX(),i.getY()):
                 #print("ROOK HEALTH DECREASES -2")
@@ -685,6 +728,7 @@ class PlayTile(BackgroundTile):
 
 
 class ButtonTile(BackgroundTile):
+    """Make tiles as a button so it can be responsive when the user wants to select a rook"""
     def set_rook(self,rook,counters):
         if counters.enemy_money >= self.rook.cost:
             return self.rook
@@ -692,6 +736,7 @@ class ButtonTile(BackgroundTile):
             return None
 
     def draw_rook(self,game_window,rook_applicator):
+        """Draw the buttons at the bottom of the screen"""
         if bool(rook_applicator.selected):
             if rook_applicator.selected == self.rook:
                 draw.rect(game_window,(238,190,47),
@@ -701,6 +746,7 @@ class ButtonTile(BackgroundTile):
         pass
 
 class InactiveTiles(BackgroundTile):
+    """Inactive tiles to prevent the player to place a rook outside the game board"""
     def set_rook(self,rook,counters):
         return None
 
@@ -711,6 +757,7 @@ class InactiveTiles(BackgroundTile):
         pass
 
 class Bullets(sprite.Sprite):
+    """Class for the objects that the rooks throw to the avatars"""
     def __init__(self,coordinates,bullet_type):
         super().__init__()
         self.bullet_type = bullet_type
@@ -734,6 +781,7 @@ class Bullets(sprite.Sprite):
         self.rect.y = coordinates[1] + 40
 
     def update(self,game_window):
+        """Updates the bullets """
         game_window.blit(BACKGROUND,(self.rect.x,self.rect.y),self.rect)
         timer = pygame.time.get_ticks()
         timerBullets = timer/1000
@@ -745,6 +793,7 @@ class Bullets(sprite.Sprite):
 
 
 class AvatarObject(sprite.Sprite):
+    """Class for the objects that the avatars throw to the rooks"""
     def __init__(self,x,y,object_type,image):
         super().__init__()
         #self.x = x
@@ -772,6 +821,7 @@ class AvatarObject(sprite.Sprite):
         return self.rect.y
 
     def update_object(self,game_window):
+        """Update the object """
         game_window.blit(BACKGROUND, (self.rect.x, self.rect.y),self.rect)
         self.rect.x -= self.speed
         if self.rect.x < 100:
@@ -890,6 +940,20 @@ def PlayerName(name):
     text = font.render("Player: " + str(name), True,(255,255,255))
     GAME_WINDOW.blit(text, (0, 550))
 
+def LevelDisplay(currentLevel):
+    """Function that shows the current level an user is playing"""
+    font = pygame.font.Font("font.ttf",25)
+    text = font.render(str(currentLevel), True,(255,255,255))
+    GAME_WINDOW.blit(text, (0, 25))
+
+def DisplayAvatarsDead(num):
+    font = pygame.font.Font("font.ttf", 25)
+    text = font.render("Dead Avatars: "+str(num), True, (255, 255, 255))
+    GAME_WINDOW.blit(text, (0, 50))
+
+
+
+
 
 #create group for all avatars instances and bullets instances
 all_avatars = sprite.Group()
@@ -915,6 +979,7 @@ timer = pygame.time.get_ticks()
 gameTimerSeconds = int(timer/1000)
 
 #create an instance of counters
+
 counters = Counters(startingMoney,moneyRate,startingMoneyBooster,WIN_TIME,ENEMIES_PASSED,FIRE_RATE,gameTimerSeconds,playerName)
 
 #rook initialization
@@ -923,16 +988,19 @@ FIRErook = Rook("FIRE_ROOK",150,FIRE_ROOK)
 SANDrook = Rook("SAND_ROOK",50,SAND_ROOK)
 ROCKrook = Rook("ROCK_ROOK",100,ROCK_ROOK)
 
-rook_applicator = RookApplicator()
-rook_remover = RookRemover()
+rook_applicator = RookApplicator() #Create an instance of the rook applicator class
+
 def MainloopLevel1(name,secondsToShoot):
+    """First level of the game"""
 
     global BACKGROUND
     BACKGROUND = transform.scale(background_surf1,WINDOW_RES)
     GAME_WINDOW.blit(BACKGROUND, (0, 0))
 
     global avatarsDead
-    avatarsDead = []
+    avatarsDead = [] #Stores the amount of avatars that have been killed on screen
+
+    counters.setFIRE_RATE(secondsToShoot*60)
 
     #initialize and draw the background grid
     #create an empty list to hold the tile grid
@@ -966,34 +1034,28 @@ def MainloopLevel1(name,secondsToShoot):
                     draw.rect(GAME_WINDOW,tile_color,
                               (WIDTH*column,HEIGHT*row,WIDTH,HEIGHT),1)
 
-
-
     #Mainloop
     game_running = True
     program_running = True
     PlayMainMusic()
 
     while game_running:
-
-        #print(all_rooks_sprite)
-        #print(len(all_rooks_created))
-        #print(len(playTilesList))
-        #check for events
+        #Check for events
         for event in pygame.event.get():
             #Exit the game
             if event.type == QUIT:
                 game_running = False
                 program_running = False
-            elif event.type == MOUSEBUTTONDOWN:
+            elif event.type == MOUSEBUTTONDOWN: #event for when the left button of the mouse is pressed
                 if event.button == 1:
-                    coordinates = mouse.get_pos()
-                    x = coordinates[0]
+                    coordinates = mouse.get_pos() #gets the coordinates of the mouse
+                    x = coordinates[0] #store the coordinates in a list
                     y = coordinates[1]
-                    tile_y = y // 100
-                    tile_x = x // 100
+                    tile_y = y // 100 #get the column
+                    tile_x = x // 100 #get the row
                     #print(tile_y,tile_x)
                     print(x,y)
-                    rook_applicator.select_tile(tile_grid[tile_y][tile_x],counters)
+                    rook_applicator.select_tile(tile_grid[tile_y][tile_x],counters) #Applies the rook to the game board
                 elif event.button == 3:
                     coordinates = mouse.get_pos()
                     x = coordinates[0]
@@ -1003,15 +1065,17 @@ def MainloopLevel1(name,secondsToShoot):
                     print(tile_y, tile_x)
                     print("SHOULD REMOVE THE ROOK")
                     print((x//100*100,y//100*100))
-                    rook_remover.select_tile(tile_grid[tile_y][tile_x],counters)
+                    #rook_remover.select_tile(tile_grid[tile_y][tile_x],counters)
             elif event.type == MOUSEMOTION:
                 position = mouse.get_pos()
                 #print(position)
 
-        PlayerName(name)
-        timerSecs = int(pygame.time.get_ticks()//1000)
+        PlayerName(name) #displays the player name
+        timerSecs = int(pygame.time.get_ticks()//1000) #timer for the screen
         print(timerSecs)
         print("AVATARS KILLED "+str(len(avatarsDead)))
+
+        LevelDisplay("Level 1")
 
         #spawn sprites
         if randint(1,SPAWN_RATE) == 1:
@@ -1102,13 +1166,14 @@ def MainloopLevel1(name,secondsToShoot):
             object.attack_rook()
             object.kill()
 
-        if len(avatarsDead) >= 10 and counters.enemies_passed < ENEMIES_PASSED:#winning condition
-            MainloopLevel2(name,secondsToShoot)
-        elif len(avatarsDead) < 10 and counters.enemies_passed >= ENEMIES_PASSED: #losing condition
+        #Wining or losing the game
+        if len(avatarsDead) >= 10 and counters.enemies_passed < 8:#winning condition
+            MainloopLevel2(name,secondsToShoot) #next level
+        elif len(avatarsDead) < 10 and counters.enemies_passed >= 8: #losing condition
             SaveScore(name,len(avatarsDead),timerSecs)
             pygame.quit()
             welcomeWindow.destroy()
-            GameOverAnimation()
+            GameOverAnimation() #show animation if the player has lost the game
 
         counters.update(GAME_WINDOW)
 
@@ -1120,12 +1185,15 @@ def MainloopLevel1(name,secondsToShoot):
 
 
 def MainloopLevel2(name,secondsToShoot):
+    """Level 2"""
     global BACKGROUND
     BACKGROUND = transform.scale(background_surf2, WINDOW_RES)
     GAME_WINDOW.blit(BACKGROUND, (0, 0))
 
     global avatarsDead
-    avatarsDead = []
+    avatarsDead = [] #list that contains the number of avatars killed
+
+    counters.setFIRE_RATE(secondsToShoot * 60)
 
     #initialize and draw the background grid
     #create an empty list to hold the tile grid
@@ -1164,14 +1232,9 @@ def MainloopLevel2(name,secondsToShoot):
     #Mainloop
     game_running = True
     program_running = True
-    PlayMainMusic()
+    PlayMainMusic() #plays the music of the game
 
     while game_running:
-
-        #print(all_rooks_sprite)
-        #print(len(all_rooks_created))
-        #print(len(playTilesList))
-        #check for events
         for event in pygame.event.get():
             #Exit the game
             if event.type == QUIT:
@@ -1179,11 +1242,11 @@ def MainloopLevel2(name,secondsToShoot):
                 program_running = False
             elif event.type == MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    coordinates = mouse.get_pos()
-                    x = coordinates[0]
+                    coordinates = mouse.get_pos()#event for when the left button of the mouse is pressed
+                    x = coordinates[0] #store the coordinates in a list
                     y = coordinates[1]
-                    tile_y = y // 100
-                    tile_x = x // 100
+                    tile_y = y // 100 #column
+                    tile_x = x // 100 #row
                     #print(tile_y,tile_x)
                     #print(x,y)
                     rook_applicator.select_tile(tile_grid[tile_y][tile_x],counters)
@@ -1196,11 +1259,13 @@ def MainloopLevel2(name,secondsToShoot):
                     print(tile_y, tile_x)
                     print("SHOULD REMOVE THE ROOK")
                     print((x//100*100,y//100*100))
-                    rook_remover.select_tile(tile_grid[tile_y][tile_x],counters)
+                    #rook_remover.select_tile(tile_grid[tile_y][tile_x],counters)
             elif event.type == MOUSEMOTION:
                 position = mouse.get_pos()
                 #print(position)
 
+        PlayerName(name)
+        LevelDisplay("Level 2")
 
         #spawn sprites
         if randint(1,SPAWN_RATE) == 1:
@@ -1248,6 +1313,11 @@ def MainloopLevel2(name,secondsToShoot):
             #game_running = False
 
         #Update enemies
+
+
+        for avatar in all_avatars:
+            avatar.setSpeed(2)
+
         for avatar in all_avatars:
             avatar.update(GAME_WINDOW,counters)
 
@@ -1293,15 +1363,13 @@ def MainloopLevel2(name,secondsToShoot):
             object.attack_rook()
             object.kill()
 
-        if len(avatarsDead) >= 10 and counters.enemies_passed < ENEMIES_PASSED:
-            MainloopLevel3(name,secondsToShoot)
-        elif len(avatarsDead) < 10 and counters.enemies_passed >= ENEMIES_PASSED:
+        #Winning or losing the game
+        if len(avatarsDead) >= 20 and counters.enemies_passed < 6:
+            MainloopLevel3(name,secondsToShoot) #level 3
+        elif len(avatarsDead) < 20 and counters.enemies_passed >= 6:
             pygame.quit()
             welcomeWindow.destroy()
-            GameOverAnimation()
-
-
-
+            GameOverAnimation() #shows the animation if the player has lost the game
 
         counters.update(GAME_WINDOW)
 
@@ -1313,11 +1381,15 @@ def MainloopLevel2(name,secondsToShoot):
 
 
 def MainloopLevel3(name,secondsToShoot):
+    """Level 3"""
     global BACKGROUND
     BACKGROUND = transform.scale(background_surf3, WINDOW_RES)
     GAME_WINDOW.blit(BACKGROUND, (0, 0))
     global avatarsDead
-    avatarsDead = []
+    avatarsDead = [] #store the amount of avatars that have been killed
+
+    counters.setFIRE_RATE(secondsToShoot * 60)
+
     #initialize and draw the background grid
     #create an empty list to hold the tile grid
     tile_grid = []
@@ -1355,13 +1427,13 @@ def MainloopLevel3(name,secondsToShoot):
     #Mainloop
     game_running = True
     program_running = True
-    PlayMainMusic()
+    PlayMainMusic() #plays the music of the game
 
     while game_running:
 
         #print(all_rooks_sprite)
         #print(len(all_rooks_created))
-        print(len(playTilesList))
+        #print(len(playTilesList))
         #check for events
         for event in pygame.event.get():
             #Exit the game
@@ -1370,11 +1442,11 @@ def MainloopLevel3(name,secondsToShoot):
                 program_running = False
             elif event.type == MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    coordinates = mouse.get_pos()
-                    x = coordinates[0]
-                    y = coordinates[1]
-                    tile_y = y // 100
-                    tile_x = x // 100
+                    coordinates = mouse.get_pos() #gets the coordinates when the mouse is clicked
+                    x = coordinates[0] #store the value in a list
+                    y = coordinates[1] #store the value in a list
+                    tile_y = y // 100 #column
+                    tile_x = x // 100 #row
                     #print(tile_y,tile_x)
                     print(x,y)
                     rook_applicator.select_tile(tile_grid[tile_y][tile_x],counters)
@@ -1387,11 +1459,13 @@ def MainloopLevel3(name,secondsToShoot):
                     print(tile_y, tile_x)
                     print("SHOULD REMOVE THE ROOK")
                     print((x//100*100,y//100*100))
-                    rook_remover.select_tile(tile_grid[tile_y][tile_x],counters)
+                    #rook_remover.select_tile(tile_grid[tile_y][tile_x],counters)
             elif event.type == MOUSEMOTION:
                 position = mouse.get_pos()
                 #print(position)
 
+        PlayerName(name)
+        LevelDisplay("Level 3")
 
         #spawn sprites
         if randint(1,SPAWN_RATE) == 1:
@@ -1438,7 +1512,8 @@ def MainloopLevel3(name,secondsToShoot):
         #f counters.loop_count > WIN_TIME:
             #game_running = False
 
-
+        for avatar in all_avatars:
+            avatar.setSpeed(2.3)
 
         #Update enemies
         for avatar in all_avatars:
@@ -1483,14 +1558,14 @@ def MainloopLevel3(name,secondsToShoot):
             object.attack_rook()
             object.kill()
 
-        if len(avatarsDead) >= 10 and counters.enemies_passed < ENEMIES_PASSED:
+        if len(avatarsDead) >= 30 and counters.enemies_passed < 5:#winning condition
             pygame.quit()
             welcomeWindow.destroy()
-            WinningAnimation()
-        elif len(avatarsDead) < 10 and counters.enemies_passed >= ENEMIES_PASSED:
+            WinningAnimation() #shuts down pygame and tkinter and shows the winning animation
+        elif len(avatarsDead) < 30 and counters.enemies_passed >= 5:
             pygame.quit()
             welcomeWindow.destroy()
-            GameOverAnimation()
+            GameOverAnimation() #show animation when the game is over
 
         counters.update(GAME_WINDOW)
 
@@ -1502,24 +1577,26 @@ def MainloopLevel3(name,secondsToShoot):
 #_____ANIMATIONS______________________
 #ANIMATION FOR WHEN THE PLAYER WINS
 def GameOverAnimation():
-    WindowAnimation = turtle.Screen()
+    WindowAnimation = turtle.Screen() #create screen for animation
     WindowAnimation.bgcolor("black")
     WindowAnimation.bgpic("5.png")
-    WindowAnimation.title("You Won Animation")
+    WindowAnimation.title("Game Over")
     WindowAnimation.tracer(0)
 
     # Create the avatars and store them in a list
     avatars = []
 
+    #adds a new turtle to the empty list previously created
     for i in range(15):
         avatars.append(turtle.Turtle())
 
+    #load the images for animation
     WindowAnimation.register_shape("avatarKnight.gif")
     WindowAnimation.register_shape("avatarCannibal.gif")
     WindowAnimation.register_shape("avatarLumberjack.gif")
     WindowAnimation.register_shape("avatarArcher.gif")
 
-    imgs = ["avatarLumberjack.gif", "avatarCannibal.gif", "avatarKnight.gif", "avatarArcher.gif"]
+    imgs = ["avatarLumberjack.gif", "avatarCannibal.gif", "avatarKnight.gif", "avatarArcher.gif"] #store images in a list
     pen = turtle.Turtle()
     pen.hideturtle()
     pen.speed(0)
@@ -1528,19 +1605,19 @@ def GameOverAnimation():
     pen.penup()
     pen.goto(0, 150)
     font = ("Fixedsys", 80, "normal")
-    pen.write("YOU WON! :)", font=font, align="center")
+    pen.write("YOU LOST ! :(", font=font, align="center")
 
     for avatar in avatars:
-        avatar.shape(choice(imgs))
+        avatar.shape(choice(imgs))#chooses an image randomly from the list
         avatar.penup()
         avatar.speed(0)  # speed of the movement
-        X = randint(-290, 290)
-        Y = randint(200, 400)
-        avatar.goto(X, Y)  # place where it starts
+        X = randint(-290, 290)#gets a coordinate for x
+        Y = randint(200, 400)#gets a coordinate for y
+        avatar.goto(X, Y)  # place the turtle in the x y coordinates starts
         avatar.dy = 0
         avatar.dx = randint(-3, 3)  # to move from left to right
         avatar.da = randint(-5, 5)
-        gravity = 0.1
+        gravity = 0.1 #gravity to make avatars fall
 
     while True:
         time.sleep(0.01)
@@ -1567,16 +1644,18 @@ def GameOverAnimation():
 #ANIMATION FOR WHEN THE PLAYER HAS LOST THE GAME
 def WinningAnimation():
     #Variables for display
-    animationWindow = turtle.Screen()
-    animationWindow.title("You Lost Animation")
+    animationWindow = turtle.Screen() #create a display
+    animationWindow.title("You Won!! :) ")
     animationWindow.bgcolor("green")
     animationWindow.bgpic("5.png")
     animationWindow.setup(width=800,height=600)
     animationWindow.tracer(0)
+    #load images
     animationWindow.register_shape("diamond1.gif")
     animationWindow.register_shape("diamond2.gif")
     animationWindow.register_shape("diamond3.gif")
 
+    #add the images to a list
     diamondShapes = ["diamond1.gif","diamond2.gif","diamond3.gif"]
 
     #Create a list of diamonds
@@ -1586,11 +1665,11 @@ def WinningAnimation():
     for i in range(50):
         diamond = turtle.Turtle()
         diamond.speed(0)
-        diamond.shape(choice(diamondShapes))
+        diamond.shape(choice(diamondShapes)) #randomly chooses an image of the list previously created
         diamond.color("blue")
         diamond.penup()
-        diamond.goto(0,250)
-        diamond.speed = randint(1,4)
+        diamond.goto(0,250) #Starting point in x and y
+        diamond.speed = randint(1,4) #randonmly chooses a speed so the diamonds can fall
         diamonds.append(diamond)
 
     #Pen to write on screen
@@ -1602,7 +1681,7 @@ def WinningAnimation():
     pen.penup()
     pen.goto(0,150)
     font = ("Fixedsys",80,"normal")
-    pen.write("YOU LOST! :(",font=font,align="center")
+    pen.write("YOU WON!!! :)",font=font,align="center")
 
     #Mainloop for the animation
     while True:

@@ -3,8 +3,8 @@ fabiola,45,6
 allan,224,53
 gerald,54,5
 playerOne,23,53
-fulanito,34,23
-t5,45,23
+raquel,34,23
+mario,45,23
 jeff,232,6
 avatarKnight,3,2
-hhhhh,342,53
+sofia,342,53
