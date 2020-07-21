@@ -931,6 +931,8 @@ class InputBox:
 
 #----Fondos------------------------------------
 fondo1= pygame.image.load("5.jpg")
+Michael=pygame.image.load("Michael.png")
+Raquel=pygame.image.load("Raquel.png")
 #----constants--------------------------------
 BLACK=(2, 22, 34)#RGB format
 COLOR1=(255, 137, 3)
@@ -1062,6 +1064,8 @@ def Credits():
                     if event.key==pygame.K_x:
                          quit()
                win.blit(fondo1,(0,0))
+               win.blit(Michael,(930,70))
+               win.blit(Raquel,(70,70))
                buttons("volver",win,buttoncolor4,button5,buttonsize1,ID="exit1") 
                message("Creditos",COLOR4,0,-200,size="big")
                message("Desarrollado en Costa Rica",BLACK,0,-75,size="small")
